@@ -1,0 +1,1710 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>Cocktail Library</title>
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#16213e">
+    <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'%3E%3Crect fill='%231a1a2e' width='192' height='192'/%3E%3Cpath fill='%23f4c2c2' d='M96 40 L130 90 L130 150 C130 155 125 160 120 160 L72 160 C67 160 62 155 62 150 L62 90 Z'/%3E%3Cpath fill='none' stroke='%23f4c2c2' stroke-width='3' d='M60 90 L132 90 M75 110 L117 110'/%3E%3C/svg%3E">
+
+    <style>
+        /* Import Fonts */
+        @import url('https://fonts.cdnfonts.com/css/benguiat');
+        @import url('https://fonts.googleapis.com/css2?family=Helvetica:wght@300;400;500;700&display=swap');
+
+        /* CSS Variables */
+        :root {
+            --gradient-start: #0f0c29;
+            --gradient-mid: #302b63;
+            --gradient-end: #24243e;
+            --text-primary: #f4f4f4;
+            --text-secondary: #d4d4d4;
+            --accent: #f4c2c2;
+            --accent-hover: #ffb3b3;
+            --card-bg: rgba(255, 255, 255, 0.08);
+            --card-border: rgba(255, 255, 255, 0.12);
+            --input-bg: rgba(255, 255, 255, 0.05);
+            --shadow: rgba(0, 0, 0, 0.3);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            background: linear-gradient(135deg, var(--gradient-start) 0%, var(--gradient-mid) 50%, var(--gradient-end) 100%);
+            background-attachment: fixed;
+            color: var(--text-primary);
+            min-height: 100vh;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        h1, h2, h3 {
+            font-family: 'Benguiat', serif;
+            letter-spacing: 0.05em;
+        }
+
+        /* Header */
+        .header {
+            padding: 1.5rem;
+            text-align: center;
+            border-bottom: 1px solid var(--card-border);
+            background: rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(10px);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            color: var(--accent);
+            text-shadow: 2px 2px 8px var(--shadow);
+        }
+
+        /* Navigation */
+        .nav {
+            display: flex;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 1rem;
+            background: rgba(0, 0, 0, 0.15);
+            border-bottom: 1px solid var(--card-border);
+            position: sticky;
+            top: 84px;
+            z-index: 99;
+            backdrop-filter: blur(10px);
+        }
+
+        .nav-btn {
+            padding: 0.75rem 1.5rem;
+            background: var(--input-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 20px;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.95rem;
+            font-weight: 500;
+        }
+
+        .nav-btn.active {
+            background: var(--accent);
+            color: var(--gradient-start);
+            border-color: var(--accent);
+        }
+
+        .nav-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px var(--shadow);
+        }
+
+        /* Container */
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem 1rem;
+        }
+
+        .view {
+            display: none;
+        }
+
+        .view.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Cards */
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 32px var(--shadow);
+            transition: transform 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-4px);
+        }
+
+        .card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+            color: var(--accent);
+        }
+
+        .card-meta {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin: 0.75rem 0;
+            flex-wrap: wrap;
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.4rem 0.8rem;
+            background: rgba(244, 194, 194, 0.15);
+            border: 1px solid var(--accent);
+            border-radius: 12px;
+            font-size: 0.85rem;
+            color: var(--accent);
+        }
+
+        .badge.master {
+            background: rgba(255, 215, 0, 0.15);
+            border-color: gold;
+            color: gold;
+        }
+
+        /* Input Fields */
+        input[type="text"],
+        input[type="number"],
+        textarea,
+        select {
+            width: 100%;
+            padding: 0.75rem;
+            background: var(--input-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 12px;
+            color: var(--text-primary);
+            font-size: 1rem;
+            font-family: inherit;
+            margin-bottom: 1rem;
+        }
+
+        input::placeholder,
+        textarea::placeholder {
+            color: var(--text-secondary);
+        }
+
+        textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        /* Buttons */
+        .btn {
+            padding: 0.75rem 1.5rem;
+            background: var(--accent);
+            color: var(--gradient-start);
+            border: none;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-block;
+        }
+
+        .btn:hover {
+            background: var(--accent-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(244, 194, 194, 0.4);
+        }
+
+        .btn-secondary {
+            background: var(--input-bg);
+            color: var(--text-primary);
+            border: 1px solid var(--card-border);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.1);
+            box-shadow: 0 4px 12px var(--shadow);
+        }
+
+        .btn-small {
+            padding: 0.5rem 1rem;
+            font-size: 0.9rem;
+        }
+
+        .btn-icon {
+            padding: 0.5rem;
+            background: transparent;
+            border: 1px solid var(--card-border);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn-icon:hover {
+            background: var(--input-bg);
+            transform: scale(1.1);
+        }
+
+        .btn-icon.active {
+            background: var(--accent);
+            border-color: var(--accent);
+        }
+
+        /* Search Bar */
+        .search-bar {
+            position: relative;
+            margin-bottom: 1.5rem;
+        }
+
+        .search-bar input {
+            padding-left: 2.5rem;
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 0.75rem;
+            top: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        /* Tabs */
+        .tabs {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            border-bottom: 2px solid var(--card-border);
+        }
+
+        .tab {
+            padding: 0.75rem 1.5rem;
+            background: transparent;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 500;
+            border-bottom: 2px solid transparent;
+            margin-bottom: -2px;
+            transition: all 0.3s ease;
+        }
+
+        .tab.active {
+            color: var(--accent);
+            border-bottom-color: var(--accent);
+        }
+
+        /* Filters */
+        .filters {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .filter-chip {
+            padding: 0.5rem 1rem;
+            background: var(--input-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 20px;
+            color: var(--text-secondary);
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+
+        .filter-chip.active {
+            background: var(--accent);
+            color: var(--gradient-start);
+            border-color: var(--accent);
+        }
+
+        /* Carousel */
+        .carousel-container {
+            position: relative;
+            margin: 2rem 0;
+        }
+
+        .carousel {
+            display: flex;
+            overflow-x: auto;
+            scroll-snap-type: x mandatory;
+            gap: 1rem;
+            padding: 1rem 0;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
+        }
+
+        .carousel::-webkit-scrollbar {
+            display: none;
+        }
+
+        .carousel-card {
+            min-width: 85%;
+            scroll-snap-align: center;
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 16px;
+            padding: 1.5rem;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 32px var(--shadow);
+            position: relative;
+        }
+
+        .carousel-close {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid var(--card-border);
+            border-radius: 50%;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: var(--text-primary);
+            font-size: 1.2rem;
+            transition: all 0.3s ease;
+        }
+
+        .carousel-close:hover {
+            background: var(--accent);
+            color: var(--gradient-start);
+        }
+
+        /* Ingredient List */
+        .ingredient-list {
+            margin: 1rem 0;
+        }
+
+        .ingredient-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid var(--card-border);
+        }
+
+        .ingredient-item:last-child {
+            border-bottom: none;
+        }
+
+        /* Toggle Switch */
+        .toggle {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 26px;
+        }
+
+        .toggle input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: var(--input-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 26px;
+            transition: 0.3s;
+        }
+
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: var(--text-secondary);
+            border-radius: 50%;
+            transition: 0.3s;
+        }
+
+        .toggle input:checked + .toggle-slider {
+            background-color: var(--accent);
+            border-color: var(--accent);
+        }
+
+        .toggle input:checked + .toggle-slider:before {
+            transform: translateX(24px);
+            background-color: var(--gradient-start);
+        }
+
+        /* Comments */
+        .comments {
+            margin-top: 1rem;
+        }
+
+        .comment {
+            background: rgba(0, 0, 0, 0.2);
+            padding: 0.75rem;
+            border-radius: 8px;
+            margin-bottom: 0.5rem;
+        }
+
+        .comment-date {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-bottom: 0.25rem;
+        }
+
+        .comment-text {
+            font-size: 0.95rem;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            overflow-y: auto;
+            padding: 1rem;
+        }
+
+        .modal.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background: var(--gradient-mid);
+            border: 1px solid var(--card-border);
+            border-radius: 16px;
+            padding: 2rem;
+            max-width: 600px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 16px 48px rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-header h2 {
+            color: var(--accent);
+        }
+
+        .close-modal {
+            background: transparent;
+            border: none;
+            color: var(--text-primary);
+            font-size: 2rem;
+            cursor: pointer;
+            padding: 0;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Icon Selector */
+        .icon-selector {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            margin-bottom: 1rem;
+        }
+
+        .icon-option {
+            width: 50px;
+            height: 50px;
+            border: 2px solid var(--card-border);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: var(--input-bg);
+        }
+
+        .icon-option.selected {
+            border-color: var(--accent);
+            background: rgba(244, 194, 194, 0.15);
+        }
+
+        .icon-option:hover {
+            transform: scale(1.1);
+        }
+
+        /* Action Buttons Row */
+        .action-buttons {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 1rem;
+            flex-wrap: wrap;
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 3rem 1rem;
+            color: var(--text-secondary);
+        }
+
+        .empty-state svg {
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .header h1 {
+                font-size: 1.5rem;
+            }
+
+            .nav {
+                top: 72px;
+            }
+
+            .nav-btn {
+                padding: 0.6rem 1rem;
+                font-size: 0.85rem;
+            }
+
+            .card {
+                padding: 1rem;
+            }
+
+            .modal-content {
+                padding: 1.5rem;
+            }
+        }
+
+        /* Loading State */
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid var(--card-border);
+            border-radius: 50%;
+            border-top-color: var(--accent);
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .hidden {
+            display: none !important;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="header">
+        <h1>Cocktail Library</h1>
+    </div>
+
+    <!-- Navigation -->
+    <div class="nav">
+        <button class="nav-btn active" data-view="home">Home</button>
+        <button class="nav-btn" data-view="recipes">Recipes</button>
+        <button class="nav-btn" data-view="ingredients">Ingredients</button>
+    </div>
+
+    <!-- Main Container -->
+    <div class="container">
+        <!-- Home View -->
+        <div id="home" class="view active">
+            <div id="randomRecipeCard"></div>
+
+            <div class="card">
+                <h3>What kind of drink are you looking for?</h3>
+                <div class="search-bar">
+                    <svg class="search-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <path d="m21 21-4.35-4.35"></path>
+                    </svg>
+                    <input type="text" id="aiSearchInput" placeholder="e.g., something refreshing with tequila...">
+                </div>
+                <button class="btn" onclick="searchCocktails()">Find Cocktails</button>
+                <p style="margin-top: 1rem; font-size: 0.9rem; color: var(--text-secondary);">
+                    💡 AI search will be powered by Anthropic API (placeholder for now)
+                </p>
+            </div>
+
+            <!-- AI Suggestions Carousel -->
+            <div id="aiSuggestionsCarousel" class="carousel-container hidden">
+                <h2 style="margin-bottom: 1rem;">Suggested Recipes</h2>
+                <div id="suggestionsCarousel" class="carousel"></div>
+            </div>
+        </div>
+
+        <!-- Recipes View -->
+        <div id="recipes" class="view">
+            <div class="tabs">
+                <button class="tab active" data-tab="all-recipes">All</button>
+                <button class="tab" data-tab="favorites">Favorites</button>
+            </div>
+
+            <div class="search-bar">
+                <svg class="search-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="11" cy="11" r="8"></circle>
+                    <path d="m21 21-4.35-4.35"></path>
+                </svg>
+                <input type="text" id="recipeSearch" placeholder="Search recipes...">
+            </div>
+
+            <div class="filters">
+                <select id="typeFilter" class="filter-chip">
+                    <option value="">All Types</option>
+                    <option value="spirit-forward">Spirit Forward</option>
+                    <option value="sour">Sour</option>
+                    <option value="tiki">Tiki</option>
+                    <option value="refreshing">Refreshing</option>
+                    <option value="classic">Classic</option>
+                </select>
+
+                <select id="ingredientFilter" class="filter-chip">
+                    <option value="">All Ingredients</option>
+                </select>
+
+                <button class="filter-chip" id="masterFilter">Master Crafted</button>
+                <button class="filter-chip" id="madeFilter">Made</button>
+            </div>
+
+            <button class="btn btn-small" onclick="openRecipeModal()">+ Add New Recipe</button>
+
+            <div id="recipesList"></div>
+        </div>
+
+        <!-- Ingredients View -->
+        <div id="ingredients" class="view">
+            <div class="tabs">
+                <button class="tab active" data-tab="all-ingredients">All</button>
+                <button class="tab" data-tab="in-stock">In Stock</button>
+            </div>
+
+            <div class="search-bar">
+                <svg class="search-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="11" cy="11" r="8"></circle>
+                    <path d="m21 21-4.35-4.35"></path>
+                </svg>
+                <input type="text" id="ingredientSearch" placeholder="Search ingredients...">
+            </div>
+
+            <div class="filters">
+                <select id="ingredientTypeFilter" class="filter-chip">
+                    <option value="">All Types</option>
+                    <option value="bourbon">Bourbon</option>
+                    <option value="gin">Gin</option>
+                    <option value="vodka">Vodka</option>
+                    <option value="rum">Rum</option>
+                    <option value="tequila">Tequila</option>
+                    <option value="mezcal">Mezcal</option>
+                    <option value="whiskey">Whiskey</option>
+                    <option value="liqueur">Liqueur</option>
+                    <option value="citrus">Citrus</option>
+                    <option value="syrup">Syrup</option>
+                    <option value="bitters">Bitters</option>
+                    <option value="other">Other</option>
+                </select>
+            </div>
+
+            <button class="btn btn-small" onclick="openIngredientModal()">+ Add New Ingredient</button>
+
+            <div id="ingredientsList"></div>
+        </div>
+    </div>
+
+    <!-- Recipe Modal -->
+    <div id="recipeModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="recipeModalTitle">Add Recipe</h2>
+                <button class="close-modal" onclick="closeRecipeModal()">&times;</button>
+            </div>
+
+            <input type="text" id="recipeName" placeholder="Recipe Name">
+
+            <label style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 0.5rem; display: block;">Type</label>
+            <select id="recipeType">
+                <option value="spirit-forward">Spirit Forward 🥃</option>
+                <option value="sour">Sour 🍋</option>
+                <option value="tiki">Tiki 🗿</option>
+                <option value="refreshing">Refreshing 🌿</option>
+                <option value="classic">Classic 🎩</option>
+            </select>
+
+            <label style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 0.5rem; display: block;">Ingredients</label>
+            <div id="recipeIngredients"></div>
+            <button class="btn-secondary btn-small" onclick="addIngredientField()">+ Add Ingredient</button>
+
+            <label style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 0.5rem; display: block; margin-top: 1rem;">Instructions</label>
+            <textarea id="recipeInstructions" placeholder="Preparation instructions..."></textarea>
+
+            <label style="display: flex; align-items: center; gap: 0.5rem; margin: 1rem 0; cursor: pointer;">
+                <input type="checkbox" id="recipeMasterCrafted">
+                <span>Master Crafted ⭐</span>
+            </label>
+
+            <div style="display: flex; gap: 1rem; margin-top: 1.5rem;">
+                <button class="btn" onclick="saveRecipe()">Save Recipe</button>
+                <button class="btn-secondary" onclick="closeRecipeModal()">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Ingredient Modal -->
+    <div id="ingredientModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="ingredientModalTitle">Add Ingredient</h2>
+                <button class="close-modal" onclick="closeIngredientModal()">&times;</button>
+            </div>
+
+            <input type="text" id="ingredientName" placeholder="Ingredient Name">
+
+            <label style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 0.5rem; display: block;">Type</label>
+            <select id="ingredientType">
+                <option value="bourbon">Bourbon 🥃</option>
+                <option value="gin">Gin 🌿</option>
+                <option value="vodka">Vodka ❄️</option>
+                <option value="rum">Rum 🏝️</option>
+                <option value="tequila">Tequila 🌵</option>
+                <option value="mezcal">Mezcal 🔥</option>
+                <option value="whiskey">Whiskey 🥃</option>
+                <option value="liqueur">Liqueur 🍯</option>
+                <option value="citrus">Citrus 🍋</option>
+                <option value="syrup">Syrup 🍯</option>
+                <option value="bitters">Bitters 💧</option>
+                <option value="other">Other 🧪</option>
+            </select>
+
+            <label style="display: flex; align-items: center; gap: 0.5rem; margin: 1rem 0; cursor: pointer;">
+                <input type="checkbox" id="ingredientInStock">
+                <span>In Stock</span>
+            </label>
+
+            <div style="display: flex; gap: 1rem; margin-top: 1.5rem;">
+                <button class="btn" onclick="saveIngredient()">Save Ingredient</button>
+                <button class="btn-secondary" onclick="closeIngredientModal()">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recipe Detail Modal -->
+    <div id="recipeDetailModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="detailRecipeName"></h2>
+                <button class="close-modal" onclick="closeRecipeDetailModal()">&times;</button>
+            </div>
+
+            <div id="recipeDetailContent"></div>
+
+            <div style="margin-top: 1.5rem;">
+                <h3 style="margin-bottom: 0.5rem;">Add Comment</h3>
+                <textarea id="newComment" placeholder="Your tasting notes..."></textarea>
+                <button class="btn btn-small" onclick="addComment()">Add Comment</button>
+            </div>
+
+            <div id="recipeComments" class="comments"></div>
+
+            <div class="action-buttons">
+                <button class="btn-secondary btn-small" onclick="editRecipeFromDetail()">Edit</button>
+                <button class="btn-secondary btn-small" onclick="deleteRecipe()">Delete</button>
+                <button class="btn-secondary" onclick="closeRecipeDetailModal()">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Configuration
+        const ANTHROPIC_API_KEY = 'YOUR_API_KEY_HERE'; // Placeholder for Anthropic API
+
+        // Data Structure
+        let appData = {
+            recipes: [],
+            ingredients: [],
+            lastSync: null
+        };
+
+        let currentRecipeId = null;
+        let currentIngredientId = null;
+
+        // Icons mapping
+        const typeIcons = {
+            'spirit-forward': '🥃',
+            'sour': '🍋',
+            'tiki': '🗿',
+            'refreshing': '🌿',
+            'classic': '🎩'
+        };
+
+        const ingredientIcons = {
+            'bourbon': '🥃',
+            'gin': '🌿',
+            'vodka': '❄️',
+            'rum': '🏝️',
+            'tequila': '🌵',
+            'mezcal': '🔥',
+            'whiskey': '🥃',
+            'liqueur': '🍯',
+            'citrus': '🍋',
+            'syrup': '🍯',
+            'bitters': '💧',
+            'other': '🧪'
+        };
+
+        // Initialize App
+        function initApp() {
+            loadData();
+            initializeDefaultData();
+            setupEventListeners();
+            renderAll();
+            displayRandomRecipe();
+
+            // Sync data periodically
+            setInterval(syncData, 5000); // Every 5 seconds
+        }
+
+        // Default Data
+        function initializeDefaultData() {
+            if (appData.recipes.length === 0) {
+                appData.recipes = [
+                    {
+                        id: generateId(),
+                        name: 'Corpse Reviver #2',
+                        type: 'sour',
+                        ingredients: [
+                            { name: 'Gin', amount: 0.75 },
+                            { name: 'Lemon Juice', amount: 0.75 },
+                            { name: 'Cointreau', amount: 0.75 },
+                            { name: 'Lillet Blanc', amount: 0.75 },
+                            { name: 'Absinthe', amount: 0.25 }
+                        ],
+                        instructions: 'Shake all ingredients with ice and strain into a chilled coupe. Garnish with a lemon twist.',
+                        masterCrafted: true,
+                        favorite: false,
+                        made: false,
+                        comments: []
+                    },
+                    {
+                        id: generateId(),
+                        name: 'Aviation',
+                        type: 'sour',
+                        ingredients: [
+                            { name: 'Gin', amount: 2 },
+                            { name: 'Lemon Juice', amount: 0.5 },
+                            { name: 'Maraschino Liqueur', amount: 0.5 },
+                            { name: 'Crème de Violette', amount: 0.25 }
+                        ],
+                        instructions: 'Shake all ingredients with ice and strain into a chilled coupe. Garnish with a cherry.',
+                        masterCrafted: true,
+                        favorite: false,
+                        made: false,
+                        comments: []
+                    },
+                    {
+                        id: generateId(),
+                        name: 'Old Fashioned',
+                        type: 'spirit-forward',
+                        ingredients: [
+                            { name: 'Bourbon', amount: 2 },
+                            { name: 'Simple Syrup', amount: 0.25 },
+                            { name: 'Angostura Bitters', amount: 0.125 }
+                        ],
+                        instructions: 'Stir all ingredients with ice. Strain into a rocks glass with a large ice cube. Express orange peel over the drink and garnish.',
+                        masterCrafted: true,
+                        favorite: false,
+                        made: false,
+                        comments: []
+                    },
+                    {
+                        id: generateId(),
+                        name: 'Negroni',
+                        type: 'spirit-forward',
+                        ingredients: [
+                            { name: 'Gin', amount: 1 },
+                            { name: 'Campari', amount: 1 },
+                            { name: 'Sweet Vermouth', amount: 1 }
+                        ],
+                        instructions: 'Stir all ingredients with ice. Strain into a rocks glass with ice. Garnish with an orange peel.',
+                        masterCrafted: true,
+                        favorite: false,
+                        made: false,
+                        comments: []
+                    },
+                    {
+                        id: generateId(),
+                        name: 'Margarita',
+                        type: 'refreshing',
+                        ingredients: [
+                            { name: 'Tequila', amount: 2 },
+                            { name: 'Lime Juice', amount: 1 },
+                            { name: 'Cointreau', amount: 1 },
+                            { name: 'Simple Syrup', amount: 0.5 }
+                        ],
+                        instructions: 'Shake all ingredients with ice. Strain into a rocks glass with ice and a salted rim. Garnish with a lime wheel.',
+                        masterCrafted: true,
+                        favorite: false,
+                        made: false,
+                        comments: []
+                    },
+                    {
+                        id: generateId(),
+                        name: 'Mai Tai',
+                        type: 'tiki',
+                        ingredients: [
+                            { name: 'White Rum', amount: 1 },
+                            { name: 'Dark Rum', amount: 1 },
+                            { name: 'Lime Juice', amount: 1 },
+                            { name: 'Orange Curaçao', amount: 0.5 },
+                            { name: 'Orgeat', amount: 0.5 },
+                            { name: 'Simple Syrup', amount: 0.25 }
+                        ],
+                        instructions: 'Shake all ingredients with ice. Strain into a rocks glass filled with crushed ice. Garnish with mint and lime.',
+                        masterCrafted: true,
+                        favorite: false,
+                        made: false,
+                        comments: []
+                    },
+                    {
+                        id: generateId(),
+                        name: 'Manhattan',
+                        type: 'spirit-forward',
+                        ingredients: [
+                            { name: 'Rye Whiskey', amount: 2 },
+                            { name: 'Sweet Vermouth', amount: 1 },
+                            { name: 'Angostura Bitters', amount: 0.125 }
+                        ],
+                        instructions: 'Stir all ingredients with ice. Strain into a chilled coupe. Garnish with a cherry.',
+                        masterCrafted: true,
+                        favorite: false,
+                        made: false,
+                        comments: []
+                    },
+                    {
+                        id: generateId(),
+                        name: 'Martini',
+                        type: 'spirit-forward',
+                        ingredients: [
+                            { name: 'Gin', amount: 2.5 },
+                            { name: 'Dry Vermouth', amount: 0.5 }
+                        ],
+                        instructions: 'Stir gin and vermouth with ice. Strain into a chilled coupe. Garnish with a lemon twist or olive.',
+                        masterCrafted: true,
+                        favorite: false,
+                        made: false,
+                        comments: []
+                    },
+                    {
+                        id: generateId(),
+                        name: 'Whiskey Sour',
+                        type: 'sour',
+                        ingredients: [
+                            { name: 'Bourbon', amount: 2 },
+                            { name: 'Lemon Juice', amount: 0.75 },
+                            { name: 'Simple Syrup', amount: 0.5 },
+                            { name: 'Egg White', amount: 0.5 }
+                        ],
+                        instructions: 'Dry shake (without ice) all ingredients. Add ice and shake again. Strain into a rocks glass with ice. Garnish with a cherry and orange slice.',
+                        masterCrafted: true,
+                        favorite: false,
+                        made: false,
+                        comments: []
+                    },
+                    {
+                        id: generateId(),
+                        name: 'Daiquiri',
+                        type: 'sour',
+                        ingredients: [
+                            { name: 'White Rum', amount: 2 },
+                            { name: 'Lime Juice', amount: 1 },
+                            { name: 'Simple Syrup', amount: 0.75 }
+                        ],
+                        instructions: 'Shake all ingredients with ice. Strain into a chilled coupe. Garnish with a lime wheel.',
+                        masterCrafted: true,
+                        favorite: false,
+                        made: false,
+                        comments: []
+                    }
+                ];
+            }
+
+            if (appData.ingredients.length === 0) {
+                appData.ingredients = [
+                    { id: generateId(), name: 'Gin', type: 'gin', inStock: true },
+                    { id: generateId(), name: 'Bourbon', type: 'bourbon', inStock: true },
+                    { id: generateId(), name: 'Rye Whiskey', type: 'whiskey', inStock: false },
+                    { id: generateId(), name: 'Tequila', type: 'tequila', inStock: true },
+                    { id: generateId(), name: 'White Rum', type: 'rum', inStock: true },
+                    { id: generateId(), name: 'Dark Rum', type: 'rum', inStock: false },
+                    { id: generateId(), name: 'Lemon Juice', type: 'citrus', inStock: true },
+                    { id: generateId(), name: 'Lime Juice', type: 'citrus', inStock: true },
+                    { id: generateId(), name: 'Simple Syrup', type: 'syrup', inStock: true },
+                    { id: generateId(), name: 'Cointreau', type: 'liqueur', inStock: true },
+                    { id: generateId(), name: 'Campari', type: 'liqueur', inStock: false },
+                    { id: generateId(), name: 'Sweet Vermouth', type: 'liqueur', inStock: false },
+                    { id: generateId(), name: 'Dry Vermouth', type: 'liqueur', inStock: false },
+                    { id: generateId(), name: 'Angostura Bitters', type: 'bitters', inStock: true },
+                    { id: generateId(), name: 'Maraschino Liqueur', type: 'liqueur', inStock: false },
+                    { id: generateId(), name: 'Crème de Violette', type: 'liqueur', inStock: false },
+                    { id: generateId(), name: 'Lillet Blanc', type: 'liqueur', inStock: false },
+                    { id: generateId(), name: 'Absinthe', type: 'liqueur', inStock: false },
+                    { id: generateId(), name: 'Orange Curaçao', type: 'liqueur', inStock: false },
+                    { id: generateId(), name: 'Orgeat', type: 'syrup', inStock: false },
+                    { id: generateId(), name: 'Egg White', type: 'other', inStock: true }
+                ];
+            }
+
+            saveData();
+        }
+
+        // Event Listeners
+        function setupEventListeners() {
+            // Navigation
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const view = btn.dataset.view;
+                    switchView(view);
+                });
+            });
+
+            // Tabs
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.addEventListener('click', () => {
+                    const parent = tab.parentElement;
+                    parent.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                    tab.classList.add('active');
+                    renderAll();
+                });
+            });
+
+            // Search
+            document.getElementById('recipeSearch')?.addEventListener('input', renderRecipes);
+            document.getElementById('ingredientSearch')?.addEventListener('input', renderIngredients);
+
+            // Filters
+            document.getElementById('typeFilter')?.addEventListener('change', renderRecipes);
+            document.getElementById('ingredientFilter')?.addEventListener('change', renderRecipes);
+            document.getElementById('masterFilter')?.addEventListener('click', function() {
+                this.classList.toggle('active');
+                renderRecipes();
+            });
+            document.getElementById('madeFilter')?.addEventListener('click', function() {
+                this.classList.toggle('active');
+                renderRecipes();
+            });
+            document.getElementById('ingredientTypeFilter')?.addEventListener('change', renderIngredients);
+        }
+
+        // View Switching
+        function switchView(viewName) {
+            document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+
+            document.getElementById(viewName).classList.add('active');
+            document.querySelector(`[data-view="${viewName}"]`).classList.add('active');
+
+            renderAll();
+        }
+
+        // Render Functions
+        function renderAll() {
+            renderRecipes();
+            renderIngredients();
+            updateIngredientFilter();
+        }
+
+        function renderRecipes() {
+            const container = document.getElementById('recipesList');
+            const activeTab = document.querySelector('#recipes .tab.active').dataset.tab;
+            const searchTerm = document.getElementById('recipeSearch').value.toLowerCase();
+            const typeFilter = document.getElementById('typeFilter').value;
+            const ingredientFilter = document.getElementById('ingredientFilter').value;
+            const masterFilter = document.getElementById('masterFilter').classList.contains('active');
+            const madeFilter = document.getElementById('madeFilter').classList.contains('active');
+
+            let filtered = appData.recipes.filter(recipe => {
+                if (activeTab === 'favorites' && !recipe.favorite) return false;
+                if (searchTerm && !recipe.name.toLowerCase().includes(searchTerm)) return false;
+                if (typeFilter && recipe.type !== typeFilter) return false;
+                if (ingredientFilter && !recipe.ingredients.some(i => i.name === ingredientFilter)) return false;
+                if (masterFilter && !recipe.masterCrafted) return false;
+                if (madeFilter && !recipe.made) return false;
+                return true;
+            });
+
+            if (filtered.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
+                            <line x1="3" y1="6" x2="21" y2="6"></line>
+                        </svg>
+                        <p>No recipes found</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = filtered.map(recipe => `
+                <div class="card">
+                    <h3>${recipe.name}</h3>
+                    <div class="card-meta">
+                        <span class="badge">${typeIcons[recipe.type] || ''} ${recipe.type}</span>
+                        ${recipe.masterCrafted ? '<span class="badge master">⭐ Master Crafted</span>' : ''}
+                        ${recipe.made ? '<span class="badge">✓ Made</span>' : ''}
+                    </div>
+                    <div class="ingredient-list">
+                        ${recipe.ingredients.map(ing => `
+                            <div class="ingredient-item">
+                                <span>${ing.name}</span>
+                                <span>${ing.amount} oz</span>
+                            </div>
+                        `).join('')}
+                    </div>
+                    <div class="action-buttons">
+                        <button class="btn-icon ${recipe.favorite ? 'active' : ''}" onclick="toggleFavorite('${recipe.id}')" title="Favorite">
+                            ${recipe.favorite ? '❤️' : '🤍'}
+                        </button>
+                        <button class="btn-icon ${recipe.made ? 'active' : ''}" onclick="toggleMade('${recipe.id}')" title="Made">
+                            ✓
+                        </button>
+                        <button class="btn-secondary btn-small" onclick="viewRecipeDetail('${recipe.id}')">View Details</button>
+                        <button class="btn-secondary btn-small" onclick="editRecipe('${recipe.id}')">Edit</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function renderIngredients() {
+            const container = document.getElementById('ingredientsList');
+            const activeTab = document.querySelector('#ingredients .tab.active').dataset.tab;
+            const searchTerm = document.getElementById('ingredientSearch').value.toLowerCase();
+            const typeFilter = document.getElementById('ingredientTypeFilter').value;
+
+            let filtered = appData.ingredients.filter(ingredient => {
+                if (activeTab === 'in-stock' && !ingredient.inStock) return false;
+                if (searchTerm && !ingredient.name.toLowerCase().includes(searchTerm)) return false;
+                if (typeFilter && ingredient.type !== typeFilter) return false;
+                return true;
+            });
+
+            if (filtered.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <line x1="12" y1="8" x2="12" y2="12"></line>
+                            <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                        </svg>
+                        <p>No ingredients found</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = filtered.map(ingredient => `
+                <div class="card">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <div>
+                            <h3>${ingredient.name}</h3>
+                            <span class="badge">${ingredientIcons[ingredient.type] || ''} ${ingredient.type}</span>
+                        </div>
+                        <label class="toggle">
+                            <input type="checkbox" ${ingredient.inStock ? 'checked' : ''}
+                                   onchange="toggleStock('${ingredient.id}')">
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                    <div class="action-buttons">
+                        <button class="btn-secondary btn-small" onclick="editIngredient('${ingredient.id}')">Edit</button>
+                        <button class="btn-secondary btn-small" onclick="deleteIngredient('${ingredient.id}')">Delete</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function updateIngredientFilter() {
+            const select = document.getElementById('ingredientFilter');
+            const uniqueIngredients = [...new Set(
+                appData.recipes.flatMap(r => r.ingredients.map(i => i.name))
+            )].sort();
+
+            select.innerHTML = '<option value="">All Ingredients</option>' +
+                uniqueIngredients.map(name => `<option value="${name}">${name}</option>`).join('');
+        }
+
+        function displayRandomRecipe() {
+            const randomRecipe = appData.recipes[Math.floor(Math.random() * appData.recipes.length)];
+            if (!randomRecipe) return;
+
+            const container = document.getElementById('randomRecipeCard');
+            container.innerHTML = `
+                <div class="card">
+                    <h3>Featured Recipe</h3>
+                    <h2 style="color: var(--accent); margin: 0.5rem 0;">${randomRecipe.name}</h2>
+                    <div class="card-meta">
+                        <span class="badge">${typeIcons[randomRecipe.type] || ''} ${randomRecipe.type}</span>
+                        ${randomRecipe.masterCrafted ? '<span class="badge master">⭐ Master Crafted</span>' : ''}
+                    </div>
+                    <div class="ingredient-list">
+                        ${randomRecipe.ingredients.map(ing => `
+                            <div class="ingredient-item">
+                                <span>${ing.name}</span>
+                                <span>${ing.amount} oz</span>
+                            </div>
+                        `).join('')}
+                    </div>
+                    <p style="margin-top: 1rem; color: var(--text-secondary);">${randomRecipe.instructions}</p>
+                    <button class="btn btn-small" style="margin-top: 1rem;" onclick="viewRecipeDetail('${randomRecipe.id}')">View Details</button>
+                </div>
+            `;
+        }
+
+        // AI Search (Placeholder)
+        function searchCocktails() {
+            const query = document.getElementById('aiSearchInput').value;
+            if (!query.trim()) return;
+
+            // Placeholder: In production, this would call Anthropic API
+            // For now, show some example suggestions
+            const suggestions = [
+                {
+                    name: 'Tropical Sunset',
+                    type: 'tiki',
+                    ingredients: [
+                        { name: 'White Rum', amount: 2 },
+                        { name: 'Pineapple Juice', amount: 2 },
+                        { name: 'Lime Juice', amount: 0.5 }
+                    ],
+                    instructions: 'Shake all ingredients with ice and strain into a tiki glass.',
+                    masterCrafted: false
+                },
+                {
+                    name: 'Citrus Breeze',
+                    type: 'refreshing',
+                    ingredients: [
+                        { name: 'Vodka', amount: 1.5 },
+                        { name: 'Lemon Juice', amount: 1 },
+                        { name: 'Simple Syrup', amount: 0.5 }
+                    ],
+                    instructions: 'Shake with ice and strain into a collins glass.',
+                    masterCrafted: false
+                }
+            ];
+
+            displaySuggestions(suggestions);
+        }
+
+        function displaySuggestions(suggestions) {
+            const container = document.getElementById('suggestionsCarousel');
+            const carouselContainer = document.getElementById('aiSuggestionsCarousel');
+
+            container.innerHTML = suggestions.map((recipe, index) => `
+                <div class="carousel-card" data-index="${index}">
+                    <button class="carousel-close" onclick="removeCarouselCard(${index})">&times;</button>
+                    <h3>${recipe.name}</h3>
+                    <div class="card-meta">
+                        <span class="badge">${typeIcons[recipe.type] || ''} ${recipe.type}</span>
+                    </div>
+                    <div class="ingredient-list">
+                        ${recipe.ingredients.map(ing => `
+                            <div class="ingredient-item">
+                                <span>${ing.name}</span>
+                                <span>${ing.amount} oz</span>
+                            </div>
+                        `).join('')}
+                    </div>
+                    <p style="margin-top: 1rem; color: var(--text-secondary);">${recipe.instructions}</p>
+                    <button class="btn btn-small" style="margin-top: 1rem;"
+                            onclick='addSuggestedRecipe(${JSON.stringify(recipe).replace(/'/g, "&apos;")})'>
+                        Add to Library
+                    </button>
+                </div>
+            `).join('');
+
+            carouselContainer.classList.remove('hidden');
+        }
+
+        function removeCarouselCard(index) {
+            const card = document.querySelector(`.carousel-card[data-index="${index}"]`);
+            if (card) {
+                card.style.display = 'none';
+            }
+
+            // Hide carousel if all cards are removed
+            const visibleCards = document.querySelectorAll('.carousel-card:not([style*="display: none"])');
+            if (visibleCards.length === 0) {
+                document.getElementById('aiSuggestionsCarousel').classList.add('hidden');
+            }
+        }
+
+        function addSuggestedRecipe(recipe) {
+            recipe.id = generateId();
+            recipe.favorite = false;
+            recipe.made = false;
+            recipe.comments = [];
+            appData.recipes.push(recipe);
+            saveData();
+            alert('Recipe added to library!');
+        }
+
+        // Recipe CRUD
+        function openRecipeModal(recipeId = null) {
+            const modal = document.getElementById('recipeModal');
+            currentRecipeId = recipeId;
+
+            if (recipeId) {
+                const recipe = appData.recipes.find(r => r.id === recipeId);
+                document.getElementById('recipeModalTitle').textContent = 'Edit Recipe';
+                document.getElementById('recipeName').value = recipe.name;
+                document.getElementById('recipeType').value = recipe.type;
+                document.getElementById('recipeInstructions').value = recipe.instructions;
+                document.getElementById('recipeMasterCrafted').checked = recipe.masterCrafted;
+
+                const container = document.getElementById('recipeIngredients');
+                container.innerHTML = recipe.ingredients.map((ing, index) => `
+                    <div style="display: flex; gap: 0.5rem; margin-bottom: 0.5rem;">
+                        <select style="flex: 2;" data-ingredient-index="${index}">
+                            ${appData.ingredients.map(i =>
+                                `<option value="${i.name}" ${i.name === ing.name ? 'selected' : ''}>${i.name}</option>`
+                            ).join('')}
+                        </select>
+                        <input type="number" step="0.25" value="${ing.amount}"
+                               placeholder="oz" style="flex: 1;" data-amount-index="${index}">
+                        <button class="btn-icon" onclick="removeIngredientField(${index})">×</button>
+                    </div>
+                `).join('');
+            } else {
+                document.getElementById('recipeModalTitle').textContent = 'Add Recipe';
+                document.getElementById('recipeName').value = '';
+                document.getElementById('recipeType').value = 'spirit-forward';
+                document.getElementById('recipeInstructions').value = '';
+                document.getElementById('recipeMasterCrafted').checked = false;
+                document.getElementById('recipeIngredients').innerHTML = '';
+                addIngredientField();
+            }
+
+            modal.classList.add('active');
+        }
+
+        function closeRecipeModal() {
+            document.getElementById('recipeModal').classList.remove('active');
+            currentRecipeId = null;
+        }
+
+        function addIngredientField() {
+            const container = document.getElementById('recipeIngredients');
+            const index = container.children.length;
+            const div = document.createElement('div');
+            div.style.cssText = 'display: flex; gap: 0.5rem; margin-bottom: 0.5rem;';
+            div.innerHTML = `
+                <select style="flex: 2;" data-ingredient-index="${index}">
+                    ${appData.ingredients.map(i => `<option value="${i.name}">${i.name}</option>`).join('')}
+                </select>
+                <input type="number" step="0.25" placeholder="oz" style="flex: 1;" data-amount-index="${index}">
+                <button class="btn-icon" onclick="this.parentElement.remove()">×</button>
+            `;
+            container.appendChild(div);
+        }
+
+        function saveRecipe() {
+            const name = document.getElementById('recipeName').value.trim();
+            if (!name) {
+                alert('Please enter a recipe name');
+                return;
+            }
+
+            const ingredients = [];
+            const container = document.getElementById('recipeIngredients');
+            container.querySelectorAll('[data-ingredient-index]').forEach((select, index) => {
+                const amountInput = container.querySelector(`[data-amount-index="${index}"]`);
+                const amount = parseFloat(amountInput.value);
+                if (select.value && amount > 0) {
+                    ingredients.push({
+                        name: select.value,
+                        amount: amount
+                    });
+                }
+            });
+
+            if (ingredients.length === 0) {
+                alert('Please add at least one ingredient');
+                return;
+            }
+
+            const recipe = {
+                id: currentRecipeId || generateId(),
+                name: name,
+                type: document.getElementById('recipeType').value,
+                ingredients: ingredients,
+                instructions: document.getElementById('recipeInstructions').value.trim(),
+                masterCrafted: document.getElementById('recipeMasterCrafted').checked,
+                favorite: currentRecipeId ? appData.recipes.find(r => r.id === currentRecipeId).favorite : false,
+                made: currentRecipeId ? appData.recipes.find(r => r.id === currentRecipeId).made : false,
+                comments: currentRecipeId ? appData.recipes.find(r => r.id === currentRecipeId).comments : []
+            };
+
+            if (currentRecipeId) {
+                const index = appData.recipes.findIndex(r => r.id === currentRecipeId);
+                appData.recipes[index] = recipe;
+            } else {
+                appData.recipes.push(recipe);
+            }
+
+            saveData();
+            closeRecipeModal();
+            renderAll();
+        }
+
+        function editRecipe(id) {
+            openRecipeModal(id);
+        }
+
+        function deleteRecipe() {
+            if (!currentRecipeId) return;
+
+            if (confirm('Are you sure you want to delete this recipe?')) {
+                appData.recipes = appData.recipes.filter(r => r.id !== currentRecipeId);
+                saveData();
+                closeRecipeDetailModal();
+                renderAll();
+            }
+        }
+
+        function toggleFavorite(id) {
+            const recipe = appData.recipes.find(r => r.id === id);
+            recipe.favorite = !recipe.favorite;
+            saveData();
+            renderRecipes();
+        }
+
+        function toggleMade(id) {
+            const recipe = appData.recipes.find(r => r.id === id);
+            recipe.made = !recipe.made;
+            saveData();
+            renderRecipes();
+        }
+
+        function viewRecipeDetail(id) {
+            currentRecipeId = id;
+            const recipe = appData.recipes.find(r => r.id === id);
+
+            document.getElementById('detailRecipeName').textContent = recipe.name;
+            document.getElementById('recipeDetailContent').innerHTML = `
+                <div class="card-meta">
+                    <span class="badge">${typeIcons[recipe.type] || ''} ${recipe.type}</span>
+                    ${recipe.masterCrafted ? '<span class="badge master">⭐ Master Crafted</span>' : ''}
+                    ${recipe.made ? '<span class="badge">✓ Made</span>' : ''}
+                </div>
+
+                <h3 style="margin-top: 1.5rem; margin-bottom: 0.5rem;">Ingredients</h3>
+                <div class="ingredient-list">
+                    ${recipe.ingredients.map(ing => `
+                        <div class="ingredient-item">
+                            <span>${ing.name}</span>
+                            <span>${ing.amount} oz</span>
+                        </div>
+                    `).join('')}
+                </div>
+
+                <h3 style="margin-top: 1.5rem; margin-bottom: 0.5rem;">Instructions</h3>
+                <p>${recipe.instructions}</p>
+
+                <div style="margin-top: 1rem; display: flex; gap: 1rem;">
+                    <button class="btn-icon ${recipe.favorite ? 'active' : ''}" onclick="toggleFavorite('${recipe.id}'); viewRecipeDetail('${recipe.id}')">
+                        ${recipe.favorite ? '❤️' : '🤍'} ${recipe.favorite ? 'Favorited' : 'Favorite'}
+                    </button>
+                    <button class="btn-icon ${recipe.made ? 'active' : ''}" onclick="toggleMade('${recipe.id}'); viewRecipeDetail('${recipe.id}')">
+                        ✓ ${recipe.made ? 'Made' : 'Mark as Made'}
+                    </button>
+                </div>
+            `;
+
+            renderComments(recipe);
+            document.getElementById('recipeDetailModal').classList.add('active');
+        }
+
+        function closeRecipeDetailModal() {
+            document.getElementById('recipeDetailModal').classList.remove('active');
+            currentRecipeId = null;
+        }
+
+        function editRecipeFromDetail() {
+            closeRecipeDetailModal();
+            openRecipeModal(currentRecipeId);
+        }
+
+        function addComment() {
+            const text = document.getElementById('newComment').value.trim();
+            if (!text) return;
+
+            const recipe = appData.recipes.find(r => r.id === currentRecipeId);
+            recipe.comments.push({
+                date: new Date().toISOString(),
+                text: text
+            });
+
+            saveData();
+            document.getElementById('newComment').value = '';
+            renderComments(recipe);
+        }
+
+        function renderComments(recipe) {
+            const container = document.getElementById('recipeComments');
+            if (recipe.comments.length === 0) {
+                container.innerHTML = '<p style="color: var(--text-secondary); margin-top: 1rem;">No comments yet</p>';
+                return;
+            }
+
+            container.innerHTML = recipe.comments.map(comment => `
+                <div class="comment">
+                    <div class="comment-date">${new Date(comment.date).toLocaleDateString()}</div>
+                    <div class="comment-text">${comment.text}</div>
+                </div>
+            `).join('');
+        }
+
+        // Ingredient CRUD
+        function openIngredientModal(ingredientId = null) {
+            const modal = document.getElementById('ingredientModal');
+            currentIngredientId = ingredientId;
+
+            if (ingredientId) {
+                const ingredient = appData.ingredients.find(i => i.id === ingredientId);
+                document.getElementById('ingredientModalTitle').textContent = 'Edit Ingredient';
+                document.getElementById('ingredientName').value = ingredient.name;
+                document.getElementById('ingredientType').value = ingredient.type;
+                document.getElementById('ingredientInStock').checked = ingredient.inStock;
+            } else {
+                document.getElementById('ingredientModalTitle').textContent = 'Add Ingredient';
+                document.getElementById('ingredientName').value = '';
+                document.getElementById('ingredientType').value = 'other';
+                document.getElementById('ingredientInStock').checked = false;
+            }
+
+            modal.classList.add('active');
+        }
+
+        function closeIngredientModal() {
+            document.getElementById('ingredientModal').classList.remove('active');
+            currentIngredientId = null;
+        }
+
+        function saveIngredient() {
+            const name = document.getElementById('ingredientName').value.trim();
+            if (!name) {
+                alert('Please enter an ingredient name');
+                return;
+            }
+
+            const ingredient = {
+                id: currentIngredientId || generateId(),
+                name: name,
+                type: document.getElementById('ingredientType').value,
+                inStock: document.getElementById('ingredientInStock').checked
+            };
+
+            if (currentIngredientId) {
+                const index = appData.ingredients.findIndex(i => i.id === currentIngredientId);
+                appData.ingredients[index] = ingredient;
+            } else {
+                appData.ingredients.push(ingredient);
+            }
+
+            saveData();
+            closeIngredientModal();
+            renderAll();
+        }
+
+        function editIngredient(id) {
+            openIngredientModal(id);
+        }
+
+        function deleteIngredient(id) {
+            if (confirm('Are you sure you want to delete this ingredient?')) {
+                appData.ingredients = appData.ingredients.filter(i => i.id !== id);
+                saveData();
+                renderAll();
+            }
+        }
+
+        function toggleStock(id) {
+            const ingredient = appData.ingredients.find(i => i.id === id);
+            ingredient.inStock = !ingredient.inStock;
+            saveData();
+            renderIngredients();
+        }
+
+        // Data Persistence
+        function saveData() {
+            appData.lastSync = Date.now();
+            localStorage.setItem('cocktailLibrary', JSON.stringify(appData));
+        }
+
+        function loadData() {
+            const stored = localStorage.getItem('cocktailLibrary');
+            if (stored) {
+                appData = JSON.parse(stored);
+            }
+        }
+
+        function syncData() {
+            // Check if data has been updated by another user
+            const stored = localStorage.getItem('cocktailLibrary');
+            if (stored) {
+                const storedData = JSON.parse(stored);
+                if (storedData.lastSync > appData.lastSync) {
+                    appData = storedData;
+                    renderAll();
+                    displayRandomRecipe();
+                }
+            }
+        }
+
+        // Utilities
+        function generateId() {
+            return Date.now().toString(36) + Math.random().toString(36).substr(2);
+        }
+
+        // Register Service Worker
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/service-worker.js')
+                    .then(registration => console.log('SW registered:', registration))
+                    .catch(error => console.log('SW registration failed:', error));
+            });
+        }
+
+        // Initialize on load
+        document.addEventListener('DOMContentLoaded', initApp);
+    </script>
+</body>
+</html>

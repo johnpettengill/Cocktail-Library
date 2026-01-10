@@ -1,0 +1,24 @@
+{
+  "name": "Cocktail Library",
+  "short_name": "Cocktails",
+  "description": "Track your cocktail recipes and bar ingredients",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#1a1a2e",
+  "theme_color": "#16213e",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'%3E%3Crect fill='%231a1a2e' width='192' height='192'/%3E%3Cpath fill='%23f4c2c2' d='M96 40 L130 90 L130 150 C130 155 125 160 120 160 L72 160 C67 160 62 155 62 150 L62 90 Z'/%3E%3Cpath fill='none' stroke='%23f4c2c2' stroke-width='3' d='M60 90 L132 90 M75 110 L117 110'/%3E%3C/svg%3E",
+      "sizes": "192x192",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect fill='%231a1a2e' width='512' height='512'/%3E%3Cpath fill='%23f4c2c2' d='M256 100 L350 240 L350 400 C350 415 335 430 320 430 L192 430 C177 430 162 415 162 400 L162 240 Z'/%3E%3Cpath fill='none' stroke='%23f4c2c2' stroke-width='8' d='M155 240 L357 240 M200 290 L312 290'/%3E%3C/svg%3E",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
