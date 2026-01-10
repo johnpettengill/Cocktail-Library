@@ -12,7 +12,7 @@
 
     <style>
         /* Import Fonts */
-        @import url('https://fonts.cdnfonts.com/css/benguiat');
+        @import url('https://fonts.googleapis.com/css2?family=Emblema+One&family=Cinzel+Decorative:wght@700;900&display=swap');
         @import url('https://fonts.googleapis.com/css2?family=Helvetica:wght@300;400;500;700&display=swap');
 
         /* CSS Variables */
@@ -47,16 +47,21 @@
             -webkit-font-smoothing: antialiased;
         }
 
-        h1, h2, h3 {
-            font-family: 'Benguiat', serif;
+        h1 {
+            font-family: 'Cinzel Decorative', serif;
+            letter-spacing: 0.08em;
+            font-weight: 900;
+        }
+
+        h2, h3 {
+            font-family: 'Cinzel Decorative', serif;
             letter-spacing: 0.05em;
         }
 
         /* Header */
         .header {
-            padding: 1.5rem;
+            padding: 1.5rem 1.5rem 0.5rem;
             text-align: center;
-            border-bottom: 1px solid var(--card-border);
             background: rgba(0, 0, 0, 0.2);
             backdrop-filter: blur(10px);
             position: sticky;
@@ -75,11 +80,11 @@
             display: flex;
             justify-content: center;
             gap: 0.5rem;
-            padding: 1rem;
+            padding: 0.5rem 1rem 1rem;
             background: rgba(0, 0, 0, 0.15);
             border-bottom: 1px solid var(--card-border);
             position: sticky;
-            top: 84px;
+            top: 66px;
             z-index: 99;
             backdrop-filter: blur(10px);
         }
@@ -138,10 +143,35 @@
             backdrop-filter: blur(10px);
             box-shadow: 0 8px 32px var(--shadow);
             transition: transform 0.3s ease;
+            position: relative;
         }
 
         .card:hover {
             transform: translateY(-4px);
+        }
+
+        .card-edit-btn {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            width: 32px;
+            height: 32px;
+            background: var(--input-bg);
+            border: none;
+            border-radius: 8px;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+        }
+
+        .card-edit-btn:hover {
+            background: var(--accent);
+            color: var(--gradient-start);
+            transform: scale(1.1);
         }
 
         .card h3 {
@@ -164,7 +194,7 @@
             gap: 0.5rem;
             padding: 0.4rem 0.8rem;
             background: rgba(244, 194, 194, 0.15);
-            border: 1px solid var(--accent);
+            border: none;
             border-radius: 12px;
             font-size: 0.85rem;
             color: var(--accent);
@@ -172,7 +202,6 @@
 
         .badge.master {
             background: rgba(255, 215, 0, 0.15);
-            border-color: gold;
             color: gold;
         }
 
@@ -283,6 +312,7 @@
             gap: 1rem;
             margin-bottom: 1.5rem;
             border-bottom: 2px solid var(--card-border);
+            align-items: center;
         }
 
         .tab {
@@ -303,6 +333,30 @@
             border-bottom-color: var(--accent);
         }
 
+        .tab-add-btn {
+            margin-left: auto;
+            margin-bottom: -2px;
+            width: 36px;
+            height: 36px;
+            background: var(--input-bg);
+            border: none;
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0;
+        }
+
+        .tab-add-btn:hover {
+            background: var(--accent);
+            color: var(--gradient-start);
+            transform: scale(1.05);
+        }
+
         /* Filters */
         .filters {
             display: flex;
@@ -314,7 +368,7 @@
         .filter-chip {
             padding: 0.5rem 1rem;
             background: var(--input-bg);
-            border: 1px solid var(--card-border);
+            border: none;
             border-radius: 20px;
             color: var(--text-secondary);
             cursor: pointer;
@@ -325,7 +379,6 @@
         .filter-chip.active {
             background: var(--accent);
             color: var(--gradient-start);
-            border-color: var(--accent);
         }
 
         /* Carousel */
@@ -528,6 +581,26 @@
             justify-content: center;
         }
 
+        #ingredientName {
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+
+        .modal-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 1.5rem;
+        }
+
+        .modal-footer-left {
+            flex: 0;
+        }
+
+        .modal-footer-right {
+            flex: 0;
+        }
+
         /* Icon Selector */
         .icon-selector {
             display: flex;
@@ -585,7 +658,7 @@
             }
 
             .nav {
-                top: 72px;
+                top: 58px;
             }
 
             .nav-btn {
@@ -599,6 +672,12 @@
 
             .modal-content {
                 padding: 1.5rem;
+            }
+
+            .tab-add-btn {
+                width: 32px;
+                height: 32px;
+                font-size: 1.3rem;
             }
         }
 
@@ -625,7 +704,7 @@
 <body>
     <!-- Header -->
     <div class="header">
-        <h1>Cocktail Library</h1>
+        <h1>Bruce's Cocktail Library</h1>
     </div>
 
     <!-- Navigation -->
@@ -666,8 +745,9 @@
         <!-- Recipes View -->
         <div id="recipes" class="view">
             <div class="tabs">
-                <button class="tab active" data-tab="all-recipes">All</button>
-                <button class="tab" data-tab="favorites">Favorites</button>
+                <button class="tab active" data-tab="favorites">Favorites</button>
+                <button class="tab" data-tab="all-recipes">All</button>
+                <button class="tab-add-btn" onclick="openRecipeModal()" title="Add New Recipe">+</button>
             </div>
 
             <div class="search-bar">
@@ -688,15 +768,26 @@
                     <option value="classic">Classic</option>
                 </select>
 
-                <select id="ingredientFilter" class="filter-chip">
-                    <option value="">All Ingredients</option>
+                <select id="ingredientTypeFilter" class="filter-chip">
+                    <option value="">All Ingredient Types</option>
+                    <option value="bourbon">Bourbon</option>
+                    <option value="gin">Gin</option>
+                    <option value="vodka">Vodka</option>
+                    <option value="rum">Rum</option>
+                    <option value="tequila">Tequila</option>
+                    <option value="mezcal">Mezcal</option>
+                    <option value="whiskey">Whiskey</option>
+                    <option value="liqueur">Liqueur</option>
+                    <option value="citrus">Citrus</option>
+                    <option value="syrup">Syrup</option>
+                    <option value="bitters">Bitters</option>
+                    <option value="other">Other</option>
                 </select>
 
+                <button class="filter-chip" id="inStockOnlyFilter">Only In Stock</button>
                 <button class="filter-chip" id="masterFilter">Master Crafted</button>
                 <button class="filter-chip" id="madeFilter">Made</button>
             </div>
-
-            <button class="btn btn-small" onclick="openRecipeModal()">+ Add New Recipe</button>
 
             <div id="recipesList"></div>
         </div>
@@ -704,8 +795,9 @@
         <!-- Ingredients View -->
         <div id="ingredients" class="view">
             <div class="tabs">
-                <button class="tab active" data-tab="all-ingredients">All</button>
-                <button class="tab" data-tab="in-stock">In Stock</button>
+                <button class="tab active" data-tab="in-stock">In Stock</button>
+                <button class="tab" data-tab="all-ingredients">All</button>
+                <button class="tab-add-btn" onclick="openIngredientModal()" title="Add New Ingredient">+</button>
             </div>
 
             <div class="search-bar">
@@ -717,7 +809,7 @@
             </div>
 
             <div class="filters">
-                <select id="ingredientTypeFilter" class="filter-chip">
+                <select id="ingredientTypeFilterIngredients" class="filter-chip">
                     <option value="">All Types</option>
                     <option value="bourbon">Bourbon</option>
                     <option value="gin">Gin</option>
@@ -733,8 +825,6 @@
                     <option value="other">Other</option>
                 </select>
             </div>
-
-            <button class="btn btn-small" onclick="openIngredientModal()">+ Add New Ingredient</button>
 
             <div id="ingredientsList"></div>
         </div>
@@ -804,14 +894,21 @@
                 <option value="other">Other 🧪</option>
             </select>
 
-            <label style="display: flex; align-items: center; gap: 0.5rem; margin: 1rem 0; cursor: pointer;">
-                <input type="checkbox" id="ingredientInStock">
-                <span>In Stock</span>
+            <label style="display: flex; align-items: center; justify-content: space-between; margin: 1.5rem 0;">
+                <span style="color: var(--text-primary); font-size: 1rem;">In Stock</span>
+                <label class="toggle">
+                    <input type="checkbox" id="ingredientInStock">
+                    <span class="toggle-slider"></span>
+                </label>
             </label>
 
-            <div style="display: flex; gap: 1rem; margin-top: 1.5rem;">
-                <button class="btn" onclick="saveIngredient()">Save Ingredient</button>
-                <button class="btn-secondary" onclick="closeIngredientModal()">Cancel</button>
+            <div class="modal-footer">
+                <div class="modal-footer-left">
+                    <button class="btn-secondary btn-small" id="deleteIngredientBtn" onclick="deleteIngredientFromModal()" style="display: none;">Delete</button>
+                </div>
+                <div class="modal-footer-right">
+                    <button class="btn" onclick="saveIngredient()">Save</button>
+                </div>
             </div>
         </div>
     </div>
@@ -1111,7 +1208,11 @@
 
             // Filters
             document.getElementById('typeFilter')?.addEventListener('change', renderRecipes);
-            document.getElementById('ingredientFilter')?.addEventListener('change', renderRecipes);
+            document.getElementById('ingredientTypeFilter')?.addEventListener('change', renderRecipes);
+            document.getElementById('inStockOnlyFilter')?.addEventListener('click', function() {
+                this.classList.toggle('active');
+                renderRecipes();
+            });
             document.getElementById('masterFilter')?.addEventListener('click', function() {
                 this.classList.toggle('active');
                 renderRecipes();
@@ -1120,7 +1221,7 @@
                 this.classList.toggle('active');
                 renderRecipes();
             });
-            document.getElementById('ingredientTypeFilter')?.addEventListener('change', renderIngredients);
+            document.getElementById('ingredientTypeFilterIngredients')?.addEventListener('change', renderIngredients);
         }
 
         // View Switching
@@ -1138,7 +1239,6 @@
         function renderAll() {
             renderRecipes();
             renderIngredients();
-            updateIngredientFilter();
         }
 
         function renderRecipes() {
@@ -1146,7 +1246,8 @@
             const activeTab = document.querySelector('#recipes .tab.active').dataset.tab;
             const searchTerm = document.getElementById('recipeSearch').value.toLowerCase();
             const typeFilter = document.getElementById('typeFilter').value;
-            const ingredientFilter = document.getElementById('ingredientFilter').value;
+            const ingredientTypeFilter = document.getElementById('ingredientTypeFilter').value;
+            const inStockOnlyFilter = document.getElementById('inStockOnlyFilter').classList.contains('active');
             const masterFilter = document.getElementById('masterFilter').classList.contains('active');
             const madeFilter = document.getElementById('madeFilter').classList.contains('active');
 
@@ -1154,7 +1255,25 @@
                 if (activeTab === 'favorites' && !recipe.favorite) return false;
                 if (searchTerm && !recipe.name.toLowerCase().includes(searchTerm)) return false;
                 if (typeFilter && recipe.type !== typeFilter) return false;
-                if (ingredientFilter && !recipe.ingredients.some(i => i.name === ingredientFilter)) return false;
+
+                // Filter by ingredient type
+                if (ingredientTypeFilter) {
+                    const hasType = recipe.ingredients.some(recipeIng => {
+                        const ingredient = appData.ingredients.find(i => i.name === recipeIng.name);
+                        return ingredient && ingredient.type === ingredientTypeFilter;
+                    });
+                    if (!hasType) return false;
+                }
+
+                // Filter by in-stock only (all ingredients must be in stock)
+                if (inStockOnlyFilter) {
+                    const allInStock = recipe.ingredients.every(recipeIng => {
+                        const ingredient = appData.ingredients.find(i => i.name === recipeIng.name);
+                        return ingredient && ingredient.inStock;
+                    });
+                    if (!allInStock) return false;
+                }
+
                 if (masterFilter && !recipe.masterCrafted) return false;
                 if (madeFilter && !recipe.made) return false;
                 return true;
@@ -1175,7 +1294,8 @@
 
             container.innerHTML = filtered.map(recipe => `
                 <div class="card">
-                    <h3>${recipe.name}</h3>
+                    <button class="card-edit-btn" onclick="editRecipe('${recipe.id}')" title="Edit">✎</button>
+                    <h3 style="padding-right: 2.5rem;">${recipe.name}</h3>
                     <div class="card-meta">
                         <span class="badge">${typeIcons[recipe.type] || ''} ${recipe.type}</span>
                         ${recipe.masterCrafted ? '<span class="badge master">⭐ Master Crafted</span>' : ''}
@@ -1197,7 +1317,6 @@
                             ✓
                         </button>
                         <button class="btn-secondary btn-small" onclick="viewRecipeDetail('${recipe.id}')">View Details</button>
-                        <button class="btn-secondary btn-small" onclick="editRecipe('${recipe.id}')">Edit</button>
                     </div>
                 </div>
             `).join('');
@@ -1207,7 +1326,7 @@
             const container = document.getElementById('ingredientsList');
             const activeTab = document.querySelector('#ingredients .tab.active').dataset.tab;
             const searchTerm = document.getElementById('ingredientSearch').value.toLowerCase();
-            const typeFilter = document.getElementById('ingredientTypeFilter').value;
+            const typeFilter = document.getElementById('ingredientTypeFilterIngredients').value;
 
             let filtered = appData.ingredients.filter(ingredient => {
                 if (activeTab === 'in-stock' && !ingredient.inStock) return false;
@@ -1232,7 +1351,8 @@
 
             container.innerHTML = filtered.map(ingredient => `
                 <div class="card">
-                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <button class="card-edit-btn" onclick="editIngredient('${ingredient.id}')" title="Edit">✎</button>
+                    <div style="display: flex; justify-content: space-between; align-items: center; padding-right: 2.5rem;">
                         <div>
                             <h3>${ingredient.name}</h3>
                             <span class="badge">${ingredientIcons[ingredient.type] || ''} ${ingredient.type}</span>
@@ -1243,22 +1363,8 @@
                             <span class="toggle-slider"></span>
                         </label>
                     </div>
-                    <div class="action-buttons">
-                        <button class="btn-secondary btn-small" onclick="editIngredient('${ingredient.id}')">Edit</button>
-                        <button class="btn-secondary btn-small" onclick="deleteIngredient('${ingredient.id}')">Delete</button>
-                    </div>
                 </div>
             `).join('');
-        }
-
-        function updateIngredientFilter() {
-            const select = document.getElementById('ingredientFilter');
-            const uniqueIngredients = [...new Set(
-                appData.recipes.flatMap(r => r.ingredients.map(i => i.name))
-            )].sort();
-
-            select.innerHTML = '<option value="">All Ingredients</option>' +
-                uniqueIngredients.map(name => `<option value="${name}">${name}</option>`).join('');
         }
 
         function displayRandomRecipe() {
@@ -1595,6 +1701,7 @@
         // Ingredient CRUD
         function openIngredientModal(ingredientId = null) {
             const modal = document.getElementById('ingredientModal');
+            const deleteBtn = document.getElementById('deleteIngredientBtn');
             currentIngredientId = ingredientId;
 
             if (ingredientId) {
@@ -1603,11 +1710,13 @@
                 document.getElementById('ingredientName').value = ingredient.name;
                 document.getElementById('ingredientType').value = ingredient.type;
                 document.getElementById('ingredientInStock').checked = ingredient.inStock;
+                deleteBtn.style.display = 'block';
             } else {
                 document.getElementById('ingredientModalTitle').textContent = 'Add Ingredient';
                 document.getElementById('ingredientName').value = '';
                 document.getElementById('ingredientType').value = 'other';
                 document.getElementById('ingredientInStock').checked = false;
+                deleteBtn.style.display = 'none';
             }
 
             modal.classList.add('active');
@@ -1648,10 +1757,13 @@
             openIngredientModal(id);
         }
 
-        function deleteIngredient(id) {
+        function deleteIngredientFromModal() {
+            if (!currentIngredientId) return;
+
             if (confirm('Are you sure you want to delete this ingredient?')) {
-                appData.ingredients = appData.ingredients.filter(i => i.id !== id);
+                appData.ingredients = appData.ingredients.filter(i => i.id !== currentIngredientId);
                 saveData();
+                closeIngredientModal();
                 renderAll();
             }
         }
