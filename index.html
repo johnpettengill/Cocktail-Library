@@ -253,11 +253,11 @@
             -webkit-appearance: none;
             -moz-appearance: none;
             appearance: none;
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16'%3E%3Cpath fill='%23ffffff' d='M8 11L3 6h10z'/%3E%3C/svg%3E");
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 20 20'%3E%3Cpath fill='%23ffffff' d='M10 3l5 5H5l5-5zm0 14l-5-5h10l-5 5z'/%3E%3C/svg%3E");
             background-repeat: no-repeat;
             background-position: right 0.75rem center;
-            background-size: 16px 16px;
-            padding-right: 2.5rem;
+            background-size: 20px 20px;
+            padding-right: 2.75rem;
             cursor: pointer;
         }
 
@@ -805,18 +805,15 @@
 
         <!-- Drinks View -->
         <div id="recipes" class="view">
-            <div class="tabs">
-                <button class="tab active" data-tab="favorites">Favorites</button>
-                <button class="tab" data-tab="all-recipes">All</button>
+            <div class="search-bar" style="display: flex; align-items: center; gap: 1rem;">
+                <div style="position: relative; flex: 1;">
+                    <svg class="search-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <path d="m21 21-4.35-4.35"></path>
+                    </svg>
+                    <input type="text" id="recipeSearch" placeholder="Search drinks...">
+                </div>
                 <button class="tab-add-btn" onclick="openRecipeModal()" title="Add New Drink">+</button>
-            </div>
-
-            <div class="search-bar">
-                <svg class="search-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <circle cx="11" cy="11" r="8"></circle>
-                    <path d="m21 21-4.35-4.35"></path>
-                </svg>
-                <input type="text" id="recipeSearch" placeholder="Search drinks...">
             </div>
 
             <div class="filters">
@@ -847,7 +844,8 @@
                     </select>
                 </div>
 
-                <button class="filter-chip" id="inStockOnlyFilter">Only In Stock</button>
+                <button class="filter-chip" id="favoriteFilter">Favorite</button>
+                <button class="filter-chip" id="inStockOnlyFilter">In Stock</button>
                 <button class="filter-chip" id="masterFilter">Master Crafted</button>
                 <button class="filter-chip" id="madeFilter">Made</button>
             </div>
@@ -1274,6 +1272,10 @@
             // Filters
             document.getElementById('typeFilter')?.addEventListener('change', renderDrinks);
             document.getElementById('ingredientTypeFilter')?.addEventListener('change', renderDrinks);
+            document.getElementById('favoriteFilter')?.addEventListener('click', function() {
+                this.classList.toggle('active');
+                renderDrinks();
+            });
             document.getElementById('inStockOnlyFilter')?.addEventListener('click', function() {
                 this.classList.toggle('active');
                 renderDrinks();
@@ -1308,16 +1310,16 @@
 
         function renderDrinks() {
             const container = document.getElementById('recipesList');
-            const activeTab = document.querySelector('#recipes .tab.active').dataset.tab;
             const searchTerm = document.getElementById('recipeSearch').value.toLowerCase();
             const typeFilter = document.getElementById('typeFilter').value;
             const ingredientTypeFilter = document.getElementById('ingredientTypeFilter').value;
+            const favoriteFilter = document.getElementById('favoriteFilter').classList.contains('active');
             const inStockOnlyFilter = document.getElementById('inStockOnlyFilter').classList.contains('active');
             const masterFilter = document.getElementById('masterFilter').classList.contains('active');
             const madeFilter = document.getElementById('madeFilter').classList.contains('active');
 
             let filtered = appData.recipes.filter(recipe => {
-                if (activeTab === 'favorites' && !recipe.favorite) return false;
+                if (favoriteFilter && !recipe.favorite) return false;
                 if (searchTerm && !recipe.name.toLowerCase().includes(searchTerm)) return false;
                 if (typeFilter && recipe.type !== typeFilter) return false;
 
