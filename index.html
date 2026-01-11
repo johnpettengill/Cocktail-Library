@@ -1039,19 +1039,16 @@
 
             <div id="recipeDetailContent"></div>
 
-            <div style="margin-top: 1.5rem;">
+            <div id="commentFormContainer" style="margin-top: 1.5rem; display: none;">
                 <h3 style="margin-bottom: 0.5rem;">Add Comment</h3>
                 <textarea id="newComment" placeholder="Your tasting notes..."></textarea>
-                <button class="btn btn-small" onclick="addComment()">Add Comment</button>
+                <div style="display: flex; gap: 0.5rem; margin-top: 0.5rem;">
+                    <button class="btn btn-small" onclick="addComment()">Add Comment</button>
+                    <button class="btn-secondary btn-small" onclick="hideCommentForm()">Cancel</button>
+                </div>
             </div>
 
             <div id="recipeComments" class="comments"></div>
-
-            <div class="action-buttons">
-                <button class="btn-secondary btn-small" onclick="editRecipeFromDetail()">Edit</button>
-                <button class="btn-secondary btn-small" onclick="deleteRecipe()">Delete</button>
-                <button class="btn-secondary" onclick="closeRecipeDetailModal()">Close</button>
-            </div>
         </div>
     </div>
 
@@ -1906,7 +1903,7 @@
 
             document.getElementById('detailRecipeName').textContent = recipe.name;
             document.getElementById('recipeDetailContent').innerHTML = `
-                <div class="card-meta">
+                <div class="card-meta" style="justify-content: flex-start; margin-top: 12px;">
                     <span class="badge">${typeIcons[recipe.type] || ''} ${typeLabel}</span>
                     ${recipe.masterCrafted ? `<span class="badge master">${masterCraftedIcon} Master Crafted</span>` : ''}
                 </div>
@@ -1929,10 +1926,12 @@
                     <button class="btn-secondary btn-small" onclick="toggleMade('${recipe.id}'); viewRecipeDetail('${recipe.id}')">
                         ${recipe.made ? '<svg width="14" height="14" viewBox="0 0 448 512" fill="currentColor"><path d="M438.6 105.4c12.5 12.5 12.5 32.8 0 45.3l-256 256c-12.5 12.5-32.8 12.5-45.3 0l-128-128c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0L160 338.7 393.4 105.4c12.5-12.5 32.8-12.5 45.3 0z"/></svg><span style="margin-left: 4px;">Made</span>' : '<svg width="14" height="14" viewBox="0 0 448 512" fill="white"><path d="M438.6 105.4c12.5 12.5 12.5 32.8 0 45.3l-256 256c-12.5 12.5-32.8 12.5-45.3 0l-128-128c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0L160 338.7 393.4 105.4c12.5-12.5 32.8-12.5 45.3 0z"/></svg>'}
                     </button>
+                    <button class="btn-secondary btn-small" onclick="showCommentForm()">Add Comment</button>
                 </div>
             `;
 
             renderComments(recipe);
+            hideCommentForm();
             document.getElementById('recipeDetailModal').classList.add('active');
         }
 
@@ -1957,14 +1956,14 @@
             });
 
             saveData();
-            document.getElementById('newComment').value = '';
+            hideCommentForm();
             renderComments(recipe);
         }
 
         function renderComments(recipe) {
             const container = document.getElementById('recipeComments');
             if (recipe.comments.length === 0) {
-                container.innerHTML = '<p style="color: var(--text-secondary); margin-top: 1rem;">No comments yet</p>';
+                container.innerHTML = '';
                 return;
             }
 
@@ -1974,6 +1973,15 @@
                     <div class="comment-text">${comment.text}</div>
                 </div>
             `).join('');
+        }
+
+        function showCommentForm() {
+            document.getElementById('commentFormContainer').style.display = 'block';
+        }
+
+        function hideCommentForm() {
+            document.getElementById('commentFormContainer').style.display = 'none';
+            document.getElementById('newComment').value = '';
         }
 
         // Ingredient CRUD
