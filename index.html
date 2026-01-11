@@ -906,22 +906,19 @@
 
         <!-- Ingredients View -->
         <div id="ingredients" class="view">
-            <div class="tabs">
-                <button class="tab active" data-tab="in-stock">In Stock</button>
-                <button class="tab" data-tab="all-ingredients">All</button>
+            <div class="search-bar" style="display: flex; align-items: flex-start; gap: 8px;">
+                <div style="position: relative; flex: 1;">
+                    <svg class="search-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <path d="m21 21-4.35-4.35"></path>
+                    </svg>
+                    <input type="text" id="ingredientSearch" placeholder="Search ingredients...">
+                </div>
                 <button class="tab-add-btn" onclick="openIngredientModal()" title="Add New Ingredient">+</button>
             </div>
 
-            <div class="search-bar">
-                <svg class="search-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <circle cx="11" cy="11" r="8"></circle>
-                    <path d="m21 21-4.35-4.35"></path>
-                </svg>
-                <input type="text" id="ingredientSearch" placeholder="Search ingredients...">
-            </div>
-
             <div class="filters">
-                <select id="ingredientTypeFilterIngredients" class="filter-chip">
+                <select id="ingredientTypeFilterIngredients" class="filter-chip filter-select">
                     <option value="">All Types</option>
                     <option value="bourbon">Bourbon</option>
                     <option value="gin">Gin</option>
@@ -1471,12 +1468,10 @@
 
         function renderIngredients() {
             const container = document.getElementById('ingredientsList');
-            const activeTab = document.querySelector('#ingredients .tab.active').dataset.tab;
             const searchTerm = document.getElementById('ingredientSearch').value.toLowerCase();
             const typeFilter = document.getElementById('ingredientTypeFilterIngredients').value;
 
             let filtered = appData.ingredients.filter(ingredient => {
-                if (activeTab === 'in-stock' && !ingredient.inStock) return false;
                 if (searchTerm && !ingredient.name.toLowerCase().includes(searchTerm)) return false;
                 if (typeFilter && ingredient.type !== typeFilter) return false;
                 return true;
