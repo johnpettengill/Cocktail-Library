@@ -1882,8 +1882,7 @@
                     ${recipe.masterCrafted ? `<span class="badge master">${masterCraftedIcon} Master Crafted</span>` : ''}
                 </div>
 
-                <h3 style="margin-top: 1.5rem; margin-bottom: 0.5rem;">Ingredients</h3>
-                <div class="ingredient-list">
+                <div class="ingredient-list" style="margin-top: 1.5rem;">
                     ${recipe.ingredients.map(ing => `
                         <div class="ingredient-item">
                             <span>${ing.name}</span>
@@ -1892,8 +1891,7 @@
                     `).join('')}
                 </div>
 
-                <h3 style="margin-top: 1.5rem; margin-bottom: 0.5rem;">Instructions</h3>
-                <p>${recipe.instructions}</p>
+                <p style="margin-top: 1.5rem;">${recipe.instructions}</p>
 
                 <div style="margin-top: 1rem; display: flex; gap: 1rem; flex-wrap: wrap;">
                     <button class="btn-secondary btn-small" onclick="toggleFavorite('${recipe.id}'); viewRecipeDetail('${recipe.id}')">
