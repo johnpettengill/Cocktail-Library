@@ -247,6 +247,14 @@
             font-size: 1rem;
             font-family: inherit;
             margin-bottom: 1rem;
+            transition: border-color 0.2s ease;
+        }
+
+        input[type="text"]:hover,
+        input[type="number"]:hover,
+        textarea:hover,
+        select:hover {
+            border-color: rgba(255, 255, 255, 0.4);
         }
 
         select {
@@ -987,20 +995,19 @@
 
             <input type="text" id="ingredientName" placeholder="Ingredient Name">
 
-            <label style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 0.5rem; display: block;">Type</label>
             <select id="ingredientType">
-                <option value="bourbon">Bourbon 🥃</option>
-                <option value="gin">Gin 🌿</option>
-                <option value="vodka">Vodka ❄️</option>
-                <option value="rum">Rum 🏝️</option>
-                <option value="tequila">Tequila 🌵</option>
-                <option value="mezcal">Mezcal 🔥</option>
-                <option value="whiskey">Whiskey 🥃</option>
-                <option value="liqueur">Liqueur 🍯</option>
-                <option value="citrus">Citrus 🍋</option>
-                <option value="syrup">Syrup 🍯</option>
-                <option value="bitters">Bitters 💧</option>
-                <option value="other">Other 🧪</option>
+                <option value="bourbon">Bourbon</option>
+                <option value="gin">Gin</option>
+                <option value="vodka">Vodka</option>
+                <option value="rum">Rum</option>
+                <option value="tequila">Tequila</option>
+                <option value="mezcal">Mezcal</option>
+                <option value="whiskey">Whiskey</option>
+                <option value="liqueur">Liqueur</option>
+                <option value="citrus">Citrus</option>
+                <option value="syrup">Syrup</option>
+                <option value="bitters">Bitters</option>
+                <option value="other">Other</option>
             </select>
 
             <label style="display: flex; align-items: center; justify-content: space-between; margin: 1.5rem 0;">
