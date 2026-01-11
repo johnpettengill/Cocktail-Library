@@ -832,6 +832,7 @@
         <button class="nav-btn active" data-view="home">Home</button>
         <button class="nav-btn" data-view="recipes">Drinks</button>
         <button class="nav-btn" data-view="ingredients">Ingredients</button>
+        <button class="nav-btn" onclick="openSettings()" style="margin-left: auto;">⚙️</button>
     </div>
 
     <!-- Main Container -->
@@ -1049,6 +1050,38 @@
             </div>
 
             <div id="recipeComments" class="comments"></div>
+        </div>
+    </div>
+
+    <!-- Settings Modal -->
+    <div id="settingsModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Settings</h2>
+                <button class="close-modal" onclick="closeSettings()">&times;</button>
+            </div>
+
+            <h3 style="margin-bottom: 0.5rem;">GitHub Sync</h3>
+            <p style="color: var(--text-secondary); margin-bottom: 1rem; font-size: 0.9rem;">
+                Enable cross-device sync using a private GitHub Gist. Your data will automatically sync across all your devices.
+            </p>
+
+            <label style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 0.5rem; display: block;">GitHub Personal Access Token</label>
+            <input type="password" id="githubToken" placeholder="ghp_xxxxxxxxxxxx">
+
+            <p style="color: var(--text-secondary); margin: 1rem 0; font-size: 0.85rem;">
+                Don't have a token? <a href="https://github.com/settings/tokens/new?description=Cocktail%20Library%20Sync&scopes=gist" target="_blank" style="color: var(--accent);">Create one here</a> (select 'gist' scope only)
+            </p>
+
+            <div id="syncStatus" style="margin: 1rem 0; padding: 0.75rem; background: rgba(255,255,255,0.05); border-radius: 8px; display: none;">
+                <div style="font-size: 0.9rem; color: var(--text-secondary);"></div>
+            </div>
+
+            <div style="display: flex; gap: 1rem; margin-top: 1.5rem;">
+                <button class="btn" onclick="saveGitHubToken()">Save & Sync</button>
+                <button class="btn-secondary" onclick="testSync()">Test Connection</button>
+                <button class="btn-secondary" onclick="closeSettings()">Close</button>
+            </div>
         </div>
     </div>
 
@@ -1903,7 +1936,7 @@
 
             document.getElementById('detailRecipeName').textContent = recipe.name;
             document.getElementById('recipeDetailContent').innerHTML = `
-                <div class="card-meta" style="justify-content: flex-start; margin-top: 12px;">
+                <div class="card-meta" style="justify-content: flex-start; margin: 12px 0 0 0;">
                     <span class="badge">${typeIcons[recipe.type] || ''} ${typeLabel}</span>
                     ${recipe.masterCrafted ? `<span class="badge master">${masterCraftedIcon} Master Crafted</span>` : ''}
                 </div>
@@ -2084,6 +2117,169 @@
                     renderAll();
                     displayRandomRecipe();
                 }
+            }
+        }
+
+        // GitHub Gist Sync
+        async function syncWithGitHub() {
+            const token = localStorage.getItem('githubToken');
+            const gistId = localStorage.getItem('gistId');
+
+            if (!token) return;
+
+            try {
+                // Fetch from Gist first
+                if (gistId) {
+                    const response = await fetch(`https://api.github.com/gists/${gistId}`, {
+                        headers: {
+                            'Authorization': `token ${token}`,
+                            'Accept': 'application/vnd.github.v3+json'
+                        }
+                    });
+
+                    if (response.ok) {
+                        const gist = await response.json();
+                        const remoteData = JSON.parse(gist.files['cocktail-library.json'].content);
+
+                        // Merge: use remote if it's newer
+                        if (remoteData.lastSync > appData.lastSync) {
+                            appData = remoteData;
+                            localStorage.setItem('cocktailLibrary', JSON.stringify(appData));
+                            renderAll();
+                            displayRandomRecipe();
+                        }
+                    }
+                }
+
+                // Push local changes to Gist
+                const gistData = {
+                    description: 'Cocktail Library Data',
+                    public: false,
+                    files: {
+                        'cocktail-library.json': {
+                            content: JSON.stringify(appData, null, 2)
+                        }
+                    }
+                };
+
+                if (gistId) {
+                    // Update existing gist
+                    await fetch(`https://api.github.com/gists/${gistId}`, {
+                        method: 'PATCH',
+                        headers: {
+                            'Authorization': `token ${token}`,
+                            'Accept': 'application/vnd.github.v3+json',
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(gistData)
+                    });
+                } else {
+                    // Create new gist
+                    const response = await fetch('https://api.github.com/gists', {
+                        method: 'POST',
+                        headers: {
+                            'Authorization': `token ${token}`,
+                            'Accept': 'application/vnd.github.v3+json',
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(gistData)
+                    });
+
+                    if (response.ok) {
+                        const newGist = await response.json();
+                        localStorage.setItem('gistId', newGist.id);
+                    }
+                }
+            } catch (error) {
+                console.error('GitHub sync error:', error);
+            }
+        }
+
+        function saveGitHubToken() {
+            const token = document.getElementById('githubToken').value.trim();
+            if (token) {
+                localStorage.setItem('githubToken', token);
+                showSyncStatus('Token saved! Syncing now...', 'success');
+                syncWithGitHub().then(() => {
+                    showSyncStatus('Successfully synced with GitHub!', 'success');
+                    setTimeout(() => {
+                        closeSettings();
+                    }, 2000);
+                });
+            } else {
+                showSyncStatus('Please enter a valid token', 'error');
+            }
+        }
+
+        async function testSync() {
+            const token = document.getElementById('githubToken').value.trim() || localStorage.getItem('githubToken');
+            if (!token) {
+                showSyncStatus('Please enter a token first', 'error');
+                return;
+            }
+
+            showSyncStatus('Testing connection...', 'info');
+
+            try {
+                const response = await fetch('https://api.github.com/user', {
+                    headers: {
+                        'Authorization': `token ${token}`,
+                        'Accept': 'application/vnd.github.v3+json'
+                    }
+                });
+
+                if (response.ok) {
+                    const user = await response.json();
+                    showSyncStatus(`Connected as ${user.login} ✓`, 'success');
+                } else {
+                    showSyncStatus('Invalid token or connection failed', 'error');
+                }
+            } catch (error) {
+                showSyncStatus('Connection failed: ' + error.message, 'error');
+            }
+        }
+
+        function showSyncStatus(message, type) {
+            const status = document.getElementById('syncStatus');
+            const statusText = status.querySelector('div');
+            statusText.textContent = message;
+            status.style.display = 'block';
+
+            if (type === 'success') {
+                status.style.background = 'rgba(76, 175, 80, 0.2)';
+                statusText.style.color = '#4CAF50';
+            } else if (type === 'error') {
+                status.style.background = 'rgba(244, 67, 54, 0.2)';
+                statusText.style.color = '#F44336';
+            } else {
+                status.style.background = 'rgba(255, 255, 255, 0.05)';
+                statusText.style.color = 'var(--text-secondary)';
+            }
+        }
+
+        function openSettings() {
+            const modal = document.getElementById('settingsModal');
+            const token = localStorage.getItem('githubToken');
+            if (token) {
+                document.getElementById('githubToken').value = token;
+            }
+            modal.classList.add('active');
+        }
+
+        function closeSettings() {
+            document.getElementById('settingsModal').classList.remove('active');
+        }
+
+        // State Persistence
+        function saveViewState() {
+            const activeView = document.querySelector('.view.active')?.id || 'home';
+            localStorage.setItem('lastView', activeView);
+        }
+
+        function restoreViewState() {
+            const lastView = localStorage.getItem('lastView');
+            if (lastView && lastView !== 'home') {
+                switchView(lastView);
             }
         }
 
