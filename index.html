@@ -1130,11 +1130,24 @@
             loadData();
             initializeDefaultData();
             setupEventListeners();
+
+            // Restore last view state
+            restoreViewState();
+
             renderAll();
             displayRandomRecipe();
 
-            // Sync data periodically
-            setInterval(syncData, 5000); // Every 5 seconds
+            // Initial GitHub sync if configured
+            if (localStorage.getItem('githubToken')) {
+                syncWithGitHub();
+            }
+
+            // Sync with GitHub periodically
+            setInterval(() => {
+                if (localStorage.getItem('githubToken')) {
+                    syncWithGitHub();
+                }
+            }, 10000); // Every 10 seconds
         }
 
         // Default Data
@@ -1384,6 +1397,7 @@
             document.getElementById(viewName).classList.add('active');
             document.querySelector(`[data-view="${viewName}"]`).classList.add('active');
 
+            saveViewState();
             renderAll();
         }
 
@@ -2098,6 +2112,10 @@
         function saveData() {
             appData.lastSync = Date.now();
             localStorage.setItem('cocktailLibrary', JSON.stringify(appData));
+            // Trigger GitHub sync if token is configured
+            if (localStorage.getItem('githubToken')) {
+                syncWithGitHub();
+            }
         }
 
         function loadData() {
