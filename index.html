@@ -1371,7 +1371,21 @@
 
             let filtered = appData.recipes.filter(recipe => {
                 if (favoriteFilter && !recipe.favorite) return false;
-                if (searchTerm && !recipe.name.toLowerCase().includes(searchTerm)) return false;
+
+                // Enhanced search: title, ingredients, and ingredient types
+                if (searchTerm) {
+                    const titleMatch = recipe.name.toLowerCase().includes(searchTerm);
+                    const ingredientMatch = recipe.ingredients.some(recipeIng =>
+                        recipeIng.name.toLowerCase().includes(searchTerm)
+                    );
+                    const ingredientTypeMatch = recipe.ingredients.some(recipeIng => {
+                        const ingredient = appData.ingredients.find(i => i.name === recipeIng.name);
+                        return ingredient && ingredient.type.toLowerCase().includes(searchTerm);
+                    });
+
+                    if (!titleMatch && !ingredientMatch && !ingredientTypeMatch) return false;
+                }
+
                 if (typeFilter && recipe.type !== typeFilter) return false;
 
                 // Filter by ingredient type
@@ -1396,6 +1410,18 @@
                 if (madeFilter && !recipe.made) return false;
                 return true;
             });
+
+            // Sort to prioritize title matches
+            if (searchTerm) {
+                filtered.sort((a, b) => {
+                    const aTitleMatch = a.name.toLowerCase().includes(searchTerm);
+                    const bTitleMatch = b.name.toLowerCase().includes(searchTerm);
+
+                    if (aTitleMatch && !bTitleMatch) return -1;
+                    if (!aTitleMatch && bTitleMatch) return 1;
+                    return 0;
+                });
+            }
 
             if (filtered.length === 0) {
                 container.innerHTML = `
