@@ -198,13 +198,21 @@
             font-size: 1.5rem;
             margin-bottom: 0.5rem;
             color: var(--accent);
+            text-align: center;
+            cursor: pointer;
+            transition: opacity 0.3s ease;
+        }
+
+        .card h3:hover {
+            opacity: 0.8;
         }
 
         .card-meta {
             display: flex;
             align-items: center;
-            gap: 1rem;
-            margin: 0.75rem 0;
+            justify-content: center;
+            gap: 0.5rem;
+            margin: 0.5rem 0;
             flex-wrap: wrap;
         }
 
@@ -245,10 +253,12 @@
             -webkit-appearance: none;
             -moz-appearance: none;
             appearance: none;
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23ffffff' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16'%3E%3Cpath fill='%23ffffff' d='M8 11L3 6h10z'/%3E%3C/svg%3E");
             background-repeat: no-repeat;
             background-position: right 0.75rem center;
+            background-size: 16px 16px;
             padding-right: 2.5rem;
+            cursor: pointer;
         }
 
         input::placeholder,
@@ -761,7 +771,7 @@
     <!-- Navigation -->
     <div class="nav">
         <button class="nav-btn active" data-view="home">Home</button>
-        <button class="nav-btn" data-view="recipes">Recipes</button>
+        <button class="nav-btn" data-view="recipes">Drinks</button>
         <button class="nav-btn" data-view="ingredients">Ingredients</button>
     </div>
 
@@ -788,17 +798,17 @@
 
             <!-- AI Suggestions Carousel -->
             <div id="aiSuggestionsCarousel" class="carousel-container hidden">
-                <h2 style="margin-bottom: 1rem;">Suggested Recipes</h2>
+                <h2 style="margin-bottom: 1rem;">Suggested Drinks</h2>
                 <div id="suggestionsCarousel" class="carousel"></div>
             </div>
         </div>
 
-        <!-- Recipes View -->
+        <!-- Drinks View -->
         <div id="recipes" class="view">
             <div class="tabs">
                 <button class="tab active" data-tab="favorites">Favorites</button>
                 <button class="tab" data-tab="all-recipes">All</button>
-                <button class="tab-add-btn" onclick="openRecipeModal()" title="Add New Recipe">+</button>
+                <button class="tab-add-btn" onclick="openRecipeModal()" title="Add New Drink">+</button>
             </div>
 
             <div class="search-bar">
@@ -806,18 +816,18 @@
                     <circle cx="11" cy="11" r="8"></circle>
                     <path d="m21 21-4.35-4.35"></path>
                 </svg>
-                <input type="text" id="recipeSearch" placeholder="Search recipes...">
+                <input type="text" id="recipeSearch" placeholder="Search drinks...">
             </div>
 
             <div class="filters">
                 <div class="filters-row">
                     <select id="typeFilter" class="filter-chip filter-select">
                         <option value="">All Types</option>
-                        <option value="spirit-forward">Spirit Forward</option>
                         <option value="sour">Sour</option>
+                        <option value="spirit-forward">Spirit Forward</option>
                         <option value="tiki">Tiki</option>
-                        <option value="refreshing">Refreshing</option>
-                        <option value="classic">Classic</option>
+                        <option value="highball">Highball</option>
+                        <option value="bitter-herbal">Bitter/Herbal</option>
                     </select>
 
                     <select id="ingredientTypeFilter" class="filter-chip filter-select">
@@ -887,19 +897,19 @@
     <div id="recipeModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h2 id="recipeModalTitle">Add Recipe</h2>
+                <h2 id="recipeModalTitle">Add Drink</h2>
                 <button class="close-modal" onclick="closeRecipeModal()">&times;</button>
             </div>
 
-            <input type="text" id="recipeName" placeholder="Recipe Name">
+            <input type="text" id="recipeName" placeholder="Drink Name">
 
             <label style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 0.5rem; display: block;">Type</label>
             <select id="recipeType">
-                <option value="spirit-forward">Spirit Forward 🥃</option>
-                <option value="sour">Sour 🍋</option>
-                <option value="tiki">Tiki 🗿</option>
-                <option value="refreshing">Refreshing 🌿</option>
-                <option value="classic">Classic 🎩</option>
+                <option value="sour">Sour</option>
+                <option value="spirit-forward">Spirit Forward</option>
+                <option value="tiki">Tiki</option>
+                <option value="highball">Highball</option>
+                <option value="bitter-herbal">Bitter/Herbal</option>
             </select>
 
             <label style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 0.5rem; display: block;">Ingredients</label>
@@ -915,7 +925,7 @@
             </label>
 
             <div style="display: flex; gap: 1rem; margin-top: 1.5rem;">
-                <button class="btn" onclick="saveRecipe()">Save Recipe</button>
+                <button class="btn" onclick="saveRecipe()">Save Drink</button>
                 <button class="btn-secondary" onclick="closeRecipeModal()">Cancel</button>
             </div>
         </div>
@@ -1008,11 +1018,11 @@
 
         // Icons mapping - Font Awesome Sharp Thin style
         const typeIcons = {
-            'spirit-forward': '<svg width="14" height="14" viewBox="0 0 384 512" fill="none" stroke="currentColor" stroke-width="16"><path d="M32 0C19.1 0 7.4 7.8 2.4 19.8s-2.2 25.7 6.9 34.9L137.6 183c6.5 6.5 10.2 15.3 10.2 24.4V361.6l-67.2 44.8C68.1 414 64 426.4 64 439.4V480c0 17.7 14.3 32 32 32H288c17.7 0 32-14.3 32-32V439.4c0-13-4.1-25.4-16.6-33L236.2 361.6V207.4c0-9.2 3.7-18 10.2-24.4L374.6 54.6c9.2-9.2 11.9-22.9 6.9-34.9S364.9 0 352 0H32z"/></svg>',
             'sour': '<svg width="14" height="14" viewBox="0 0 448 512" fill="none" stroke="currentColor" stroke-width="16"><path d="M448 256c0-106-86-192-192-192S64 150 64 256s86 192 192 192 192-86 192-192zM0 256a256 256 0 1 1 512 0A256 256 0 1 1 0 256zm256 80c-26.9 0-52.3-10.7-71.2-29.7l-4.8-4.8c-6.2-6.2-6.2-16.4 0-22.6s16.4-6.2 22.6 0l4.8 4.8c13.1 13.1 30.8 20.5 49.4 20.5h.3c18.6 0 36.3-7.4 49.4-20.5l4.8-4.8c6.2-6.2 16.4-6.2 22.6 0s6.2 16.4 0 22.6l-4.8 4.8c-19 19-44.3 29.7-71.2 29.7h-.9z"/></svg>',
+            'spirit-forward': '<svg width="14" height="14" viewBox="0 0 384 512" fill="none" stroke="currentColor" stroke-width="16"><path d="M32 0C19.1 0 7.4 7.8 2.4 19.8s-2.2 25.7 6.9 34.9L137.6 183c6.5 6.5 10.2 15.3 10.2 24.4V361.6l-67.2 44.8C68.1 414 64 426.4 64 439.4V480c0 17.7 14.3 32 32 32H288c17.7 0 32-14.3 32-32V439.4c0-13-4.1-25.4-16.6-33L236.2 361.6V207.4c0-9.2 3.7-18 10.2-24.4L374.6 54.6c9.2-9.2 11.9-22.9 6.9-34.9S364.9 0 352 0H32z"/></svg>',
             'tiki': '<svg width="14" height="14" viewBox="0 0 576 512" fill="none" stroke="currentColor" stroke-width="16"><path d="M309.5 178.4L447.9 297.1c-1.6 .9-3.2 2-4.8 3c-18 12.4-40.1 20.3-59.2 20.3c-19.6 0-40.8-7.7-59.2-20.3c-22.1-15.5-51.6-15.5-73.7 0c-17.1 11.8-38 20.3-59.2 20.3c-10.1 0-21.1-2.2-31.9-6.2C163.1 193.2 262.2 96 384 96l43.4 0c4.2 0 8.3 .4 12.3 1.2c-64.6 33.1-84.7 83.8-130.2 81.2zM384 32c-10.7 0-21.4 .8-32 2.3V16c0-8.8-7.2-16-16-16s-16 7.2-16 16V37.2C234.8 52.4 160 126.6 160 216v40.8c0 20.2 16.4 36.8 36.8 36.8c7 0 13.8-2 19.6-5.8c18.9-12.4 42.8-12.4 61.7 0c18.4 12.1 40.6 18.4 62.9 18.4s44.5-6.3 62.9-18.4c18.9-12.4 42.8-12.4 61.7 0c5.8 3.8 12.6 5.8 19.6 5.8c20.4 0 36.8-16.6 36.8-36.8V216C522 104.3 433.7 32 384 32zM96 192c0-17.7-14.3-32-32-32s-32 14.3-32 32s14.3 32 32 32s32-14.3 32-32zM0 384c0 17.7 14.3 32 32 32s32-14.3 32-32s-14.3-32-32-32s-32 14.3-32 32zm256 0c0-17.7-14.3-32-32-32s-32 14.3-32 32s14.3 32 32 32s32-14.3 32-32zm160-128c-17.7 0-32 14.3-32 32s14.3 32 32 32s32-14.3 32-32s-14.3-32-32-32z"/></svg>',
-            'refreshing': '<svg width="14" height="14" viewBox="0 0 512 512" fill="none" stroke="currentColor" stroke-width="16"><path d="M272 96c-78.6 0-145.1 51.5-167.7 122.5c33.6-17 71.5-26.5 111.7-26.5h88c8.8 0 16 7.2 16 16s-7.2 16-16 16H288 216s0 0 0 0c-16.6 0-32.7 1.9-48.3 5.4c-25.9 5.9-49.9 16.4-71.4 30.7c0 0 0 0 0 0C38.3 298.8 0 364.9 0 440v16c0 13.3 10.7 24 24 24s24-10.7 24-24V440c0-48.7 20.7-92.5 53.8-123.2C121.6 392.3 190.3 448 272 448l1 0c132.1-.7 239-130.9 239-291.4c0-42.6-7.5-83.1-21.1-119.6c-2.6-6.9-12.7-6.6-16.2-.1C455.9 72.1 418.7 96 376 96L272 96z"/></svg>',
-            'classic': '<svg width="14" height="14" viewBox="0 0 576 512" fill="none" stroke="currentColor" stroke-width="16"><path d="M309 106c11.4-7 19-19.7 19-34c0-22.1-17.9-40-40-40s-40 17.9-40 40c0 14.4 7.6 27 19 34L209.7 220.6c-9.1 18.2-32.7 23.4-48.6 10.7L72 160c5-6.7 8-15 8-24c0-22.1-17.9-40-40-40S0 113.9 0 136s17.9 40 40 40c.2 0 .5 0 .7 0L86.4 427.4c5.5 30.4 32 52.6 63 52.6H426.6c30.9 0 57.4-22.1 63-52.6L535.3 176c.2 0 .5 0 .7 0c22.1 0 40-17.9 40-40s-17.9-40-40-40s-40 17.9-40 40c0 9 3 17.3 8 24l-89.1 71.3c-15.9 12.7-39.5 7.5-48.6-10.7L309 106z"/></svg>'
+            'highball': '<svg width="14" height="14" viewBox="0 0 320 512" fill="none" stroke="currentColor" stroke-width="16"><path d="M32 0C23.3 0 16 7.3 16 16V464c0 26.5 21.5 48 48 48H256c26.5 0 48-21.5 48-48V16c0-8.8-7.2-16-16-16H32zM64 32H256V288H64V32z"/></svg>',
+            'bitter-herbal': '<svg width="14" height="14" viewBox="0 0 512 512" fill="none" stroke="currentColor" stroke-width="16"><path d="M272 96c-78.6 0-145.1 51.5-167.7 122.5c33.6-17 71.5-26.5 111.7-26.5h88c8.8 0 16 7.2 16 16s-7.2 16-16 16H288 216s0 0 0 0c-16.6 0-32.7 1.9-48.3 5.4c-25.9 5.9-49.9 16.4-71.4 30.7c0 0 0 0 0 0C38.3 298.8 0 364.9 0 440v16c0 13.3 10.7 24 24 24s24-10.7 24-24V440c0-48.7 20.7-92.5 53.8-123.2C121.6 392.3 190.3 448 272 448l1 0c132.1-.7 239-130.9 239-291.4c0-42.6-7.5-83.1-21.1-119.6c-2.6-6.9-12.7-6.6-16.2-.1C455.9 72.1 418.7 96 376 96L272 96z"/></svg>'
         };
 
         const ingredientIcons = {
@@ -1114,7 +1124,7 @@
                     {
                         id: generateId(),
                         name: 'Margarita',
-                        type: 'refreshing',
+                        type: 'sour',
                         ingredients: [
                             { name: 'Tequila', amount: 2 },
                             { name: 'Lime Juice', amount: 1 },
@@ -1258,23 +1268,23 @@
             });
 
             // Search
-            document.getElementById('recipeSearch')?.addEventListener('input', renderRecipes);
+            document.getElementById('recipeSearch')?.addEventListener('input', renderDrinks);
             document.getElementById('ingredientSearch')?.addEventListener('input', renderIngredients);
 
             // Filters
-            document.getElementById('typeFilter')?.addEventListener('change', renderRecipes);
-            document.getElementById('ingredientTypeFilter')?.addEventListener('change', renderRecipes);
+            document.getElementById('typeFilter')?.addEventListener('change', renderDrinks);
+            document.getElementById('ingredientTypeFilter')?.addEventListener('change', renderDrinks);
             document.getElementById('inStockOnlyFilter')?.addEventListener('click', function() {
                 this.classList.toggle('active');
-                renderRecipes();
+                renderDrinks();
             });
             document.getElementById('masterFilter')?.addEventListener('click', function() {
                 this.classList.toggle('active');
-                renderRecipes();
+                renderDrinks();
             });
             document.getElementById('madeFilter')?.addEventListener('click', function() {
                 this.classList.toggle('active');
-                renderRecipes();
+                renderDrinks();
             });
             document.getElementById('ingredientTypeFilterIngredients')?.addEventListener('change', renderIngredients);
         }
@@ -1292,11 +1302,11 @@
 
         // Render Functions
         function renderAll() {
-            renderRecipes();
+            renderDrinks();
             renderIngredients();
         }
 
-        function renderRecipes() {
+        function renderDrinks() {
             const container = document.getElementById('recipesList');
             const activeTab = document.querySelector('#recipes .tab.active').dataset.tab;
             const searchTerm = document.getElementById('recipeSearch').value.toLowerCase();
@@ -1347,14 +1357,17 @@
                 return;
             }
 
-            container.innerHTML = filtered.map(recipe => `
+            container.innerHTML = filtered.map(recipe => {
+                const typeLabel = recipe.type === 'spirit-forward' ? 'Spirit Forward' :
+                                 recipe.type === 'bitter-herbal' ? 'Bitter/Herbal' :
+                                 recipe.type.charAt(0).toUpperCase() + recipe.type.slice(1);
+
+                return `
                 <div class="card">
-                    <button class="card-edit-btn" onclick="editRecipe('${recipe.id}')" title="Edit">✎</button>
-                    <h3 style="padding-right: 2.5rem;">${recipe.name}</h3>
+                    <h3 onclick="viewRecipeDetail('${recipe.id}')">${recipe.name}</h3>
                     <div class="card-meta">
-                        <span class="badge">${typeIcons[recipe.type] || ''} <span style="text-transform: capitalize;">${recipe.type.replace('-', ' ')}</span></span>
+                        <span class="badge">${typeIcons[recipe.type] || ''} ${typeLabel}</span>
                         ${recipe.masterCrafted ? `<span class="badge master">${masterCraftedIcon} Master Crafted</span>` : ''}
-                        ${recipe.made ? '<span class="badge"><svg width="14" height="14" viewBox="0 0 448 512" fill="currentColor"><path d="M438.6 105.4c12.5 12.5 12.5 32.8 0 45.3l-256 256c-12.5 12.5-32.8 12.5-45.3 0l-128-128c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0L160 338.7 393.4 105.4c12.5-12.5 32.8-12.5 45.3 0z"/></svg> Made</span>' : ''}
                     </div>
                     <div class="ingredient-list">
                         ${recipe.ingredients.map(ing => `
@@ -1365,16 +1378,16 @@
                         `).join('')}
                     </div>
                     <div class="action-buttons">
-                        <button class="btn-icon ${recipe.favorite ? 'active' : ''}" onclick="toggleFavorite('${recipe.id}')" title="Favorite">
-                            ${recipe.favorite ? '<svg width="16" height="16" viewBox="0 0 512 512" fill="currentColor"><path d="M47.6 300.4L228.3 469.1c7.5 7 17.4 10.9 27.7 10.9s20.2-3.9 27.7-10.9L464.4 300.4c30.4-28.3 47.6-68 47.6-109.5v-5.8c0-69.9-50.5-129.5-119.4-141C347 36.5 300.6 51.4 268 84L256 96 244 84c-32.6-32.6-79-47.5-124.6-39.9C50.5 55.6 0 115.2 0 185.1v5.8c0 41.5 17.2 81.2 47.6 109.5z"/></svg>' : '<svg width="16" height="16" viewBox="0 0 512 512" fill="none" stroke="currentColor" stroke-width="32"><path d="M47.6 300.4L228.3 469.1c7.5 7 17.4 10.9 27.7 10.9s20.2-3.9 27.7-10.9L464.4 300.4c30.4-28.3 47.6-68 47.6-109.5v-5.8c0-69.9-50.5-129.5-119.4-141C347 36.5 300.6 51.4 268 84L256 96 244 84c-32.6-32.6-79-47.5-124.6-39.9C50.5 55.6 0 115.2 0 185.1v5.8c0 41.5 17.2 81.2 47.6 109.5z"/></svg>'}
+                        <button class="btn-icon ${recipe.favorite ? 'active' : ''}" onclick="event.stopPropagation(); toggleFavorite('${recipe.id}')" title="Favorite">
+                            ${recipe.favorite ? '<svg width="16" height="16" viewBox="0 0 512 512" fill="currentColor"><path d="M47.6 300.4L228.3 469.1c7.5 7 17.4 10.9 27.7 10.9s20.2-3.9 27.7-10.9L464.4 300.4c30.4-28.3 47.6-68 47.6-109.5v-5.8c0-69.9-50.5-129.5-119.4-141C347 36.5 300.6 51.4 268 84L256 96 244 84c-32.6-32.6-79-47.5-124.6-39.9C50.5 55.6 0 115.2 0 185.1v5.8c0 41.5 17.2 81.2 47.6 109.5z"/></svg> Favorited' : '<svg width="16" height="16" viewBox="0 0 512 512" fill="white"><path d="M47.6 300.4L228.3 469.1c7.5 7 17.4 10.9 27.7 10.9s20.2-3.9 27.7-10.9L464.4 300.4c30.4-28.3 47.6-68 47.6-109.5v-5.8c0-69.9-50.5-129.5-119.4-141C347 36.5 300.6 51.4 268 84L256 96 244 84c-32.6-32.6-79-47.5-124.6-39.9C50.5 55.6 0 115.2 0 185.1v5.8c0 41.5 17.2 81.2 47.6 109.5z"/></svg>'}
                         </button>
-                        <button class="btn-icon ${recipe.made ? 'active' : ''}" onclick="toggleMade('${recipe.id}')" title="Made">
-                            <svg width="16" height="16" viewBox="0 0 448 512" fill="currentColor"><path d="M438.6 105.4c12.5 12.5 12.5 32.8 0 45.3l-256 256c-12.5 12.5-32.8 12.5-45.3 0l-128-128c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0L160 338.7 393.4 105.4c12.5-12.5 32.8-12.5 45.3 0z"/></svg>
+                        <button class="btn-icon ${recipe.made ? 'active' : ''}" onclick="event.stopPropagation(); toggleMade('${recipe.id}')" title="Made">
+                            ${recipe.made ? '<svg width="16" height="16" viewBox="0 0 448 512" fill="currentColor"><path d="M438.6 105.4c12.5 12.5 12.5 32.8 0 45.3l-256 256c-12.5 12.5-32.8 12.5-45.3 0l-128-128c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0L160 338.7 393.4 105.4c12.5-12.5 32.8-12.5 45.3 0z"/></svg> Made' : '<svg width="16" height="16" viewBox="0 0 448 512" fill="white"><path d="M438.6 105.4c12.5 12.5 12.5 32.8 0 45.3l-256 256c-12.5 12.5-32.8 12.5-45.3 0l-128-128c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0L160 338.7 393.4 105.4c12.5-12.5 32.8-12.5 45.3 0z"/></svg>'}
                         </button>
-                        <button class="btn-secondary btn-small" onclick="viewRecipeDetail('${recipe.id}')">View Details</button>
                     </div>
                 </div>
-            `).join('');
+            `;
+            }).join('');
         }
 
         function renderIngredients() {
@@ -1426,13 +1439,17 @@
             const randomRecipe = appData.recipes[Math.floor(Math.random() * appData.recipes.length)];
             if (!randomRecipe) return;
 
+            const typeLabel = randomRecipe.type === 'spirit-forward' ? 'Spirit Forward' :
+                             randomRecipe.type === 'bitter-herbal' ? 'Bitter/Herbal' :
+                             randomRecipe.type.charAt(0).toUpperCase() + randomRecipe.type.slice(1);
+
             const container = document.getElementById('randomRecipeCard');
             container.innerHTML = `
                 <div class="card">
-                    <h3>Featured Recipe</h3>
+                    <h3>Featured Drink</h3>
                     <h2 style="color: var(--accent); margin: 0.5rem 0;">${randomRecipe.name}</h2>
                     <div class="card-meta">
-                        <span class="badge">${typeIcons[randomRecipe.type] || ''} <span style="text-transform: capitalize;">${randomRecipe.type.replace('-', ' ')}</span></span>
+                        <span class="badge">${typeIcons[randomRecipe.type] || ''} ${typeLabel}</span>
                         ${randomRecipe.masterCrafted ? `<span class="badge master">${masterCraftedIcon} Master Crafted</span>` : ''}
                     </div>
                     <div class="ingredient-list">
@@ -1470,7 +1487,7 @@
                 },
                 {
                     name: 'Citrus Breeze',
-                    type: 'refreshing',
+                    type: 'highball',
                     ingredients: [
                         { name: 'Vodka', amount: 1.5 },
                         { name: 'Lemon Juice', amount: 1 },
@@ -1488,12 +1505,17 @@
             const container = document.getElementById('suggestionsCarousel');
             const carouselContainer = document.getElementById('aiSuggestionsCarousel');
 
-            container.innerHTML = suggestions.map((recipe, index) => `
+            container.innerHTML = suggestions.map((recipe, index) => {
+                const typeLabel = recipe.type === 'spirit-forward' ? 'Spirit Forward' :
+                                 recipe.type === 'bitter-herbal' ? 'Bitter/Herbal' :
+                                 recipe.type.charAt(0).toUpperCase() + recipe.type.slice(1);
+
+                return `
                 <div class="carousel-card" data-index="${index}">
                     <button class="carousel-close" onclick="removeCarouselCard(${index})">&times;</button>
                     <h3>${recipe.name}</h3>
                     <div class="card-meta">
-                        <span class="badge">${typeIcons[recipe.type] || ''} <span style="text-transform: capitalize;">${recipe.type.replace('-', ' ')}</span></span>
+                        <span class="badge">${typeIcons[recipe.type] || ''} ${typeLabel}</span>
                     </div>
                     <div class="ingredient-list">
                         ${recipe.ingredients.map(ing => `
@@ -1509,7 +1531,8 @@
                         Add to Library
                     </button>
                 </div>
-            `).join('');
+                `;
+            }).join('');
 
             carouselContainer.classList.remove('hidden');
         }
@@ -1544,7 +1567,7 @@
 
             if (recipeId) {
                 const recipe = appData.recipes.find(r => r.id === recipeId);
-                document.getElementById('recipeModalTitle').textContent = 'Edit Recipe';
+                document.getElementById('recipeModalTitle').textContent = 'Edit Drink';
                 document.getElementById('recipeName').value = recipe.name;
                 document.getElementById('recipeType').value = recipe.type;
                 document.getElementById('recipeInstructions').value = recipe.instructions;
@@ -1564,7 +1587,7 @@
                     </div>
                 `).join('');
             } else {
-                document.getElementById('recipeModalTitle').textContent = 'Add Recipe';
+                document.getElementById('recipeModalTitle').textContent = 'Add Drink';
                 document.getElementById('recipeName').value = '';
                 document.getElementById('recipeType').value = 'spirit-forward';
                 document.getElementById('recipeInstructions').value = '';
@@ -1664,26 +1687,29 @@
             const recipe = appData.recipes.find(r => r.id === id);
             recipe.favorite = !recipe.favorite;
             saveData();
-            renderRecipes();
+            renderDrinks();
         }
 
         function toggleMade(id) {
             const recipe = appData.recipes.find(r => r.id === id);
             recipe.made = !recipe.made;
             saveData();
-            renderRecipes();
+            renderDrinks();
         }
 
         function viewRecipeDetail(id) {
             currentRecipeId = id;
             const recipe = appData.recipes.find(r => r.id === id);
 
+            const typeLabel = recipe.type === 'spirit-forward' ? 'Spirit Forward' :
+                             recipe.type === 'bitter-herbal' ? 'Bitter/Herbal' :
+                             recipe.type.charAt(0).toUpperCase() + recipe.type.slice(1);
+
             document.getElementById('detailRecipeName').textContent = recipe.name;
             document.getElementById('recipeDetailContent').innerHTML = `
                 <div class="card-meta">
-                    <span class="badge">${typeIcons[recipe.type] || ''} <span style="text-transform: capitalize;">${recipe.type.replace('-', ' ')}</span></span>
+                    <span class="badge">${typeIcons[recipe.type] || ''} ${typeLabel}</span>
                     ${recipe.masterCrafted ? `<span class="badge master">${masterCraftedIcon} Master Crafted</span>` : ''}
-                    ${recipe.made ? '<span class="badge"><svg width="14" height="14" viewBox="0 0 448 512" fill="currentColor"><path d="M438.6 105.4c12.5 12.5 12.5 32.8 0 45.3l-256 256c-12.5 12.5-32.8 12.5-45.3 0l-128-128c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0L160 338.7 393.4 105.4c12.5-12.5 32.8-12.5 45.3 0z"/></svg> Made</span>' : ''}
                 </div>
 
                 <h3 style="margin-top: 1.5rem; margin-bottom: 0.5rem;">Ingredients</h3>
@@ -1701,10 +1727,10 @@
 
                 <div style="margin-top: 1rem; display: flex; gap: 1rem; flex-wrap: wrap;">
                     <button class="btn-secondary btn-small" onclick="toggleFavorite('${recipe.id}'); viewRecipeDetail('${recipe.id}')">
-                        ${recipe.favorite ? '<svg width="14" height="14" viewBox="0 0 512 512" fill="currentColor"><path d="M47.6 300.4L228.3 469.1c7.5 7 17.4 10.9 27.7 10.9s20.2-3.9 27.7-10.9L464.4 300.4c30.4-28.3 47.6-68 47.6-109.5v-5.8c0-69.9-50.5-129.5-119.4-141C347 36.5 300.6 51.4 268 84L256 96 244 84c-32.6-32.6-79-47.5-124.6-39.9C50.5 55.6 0 115.2 0 185.1v5.8c0 41.5 17.2 81.2 47.6 109.5z"/></svg>' : '<svg width="14" height="14" viewBox="0 0 512 512" fill="none" stroke="currentColor" stroke-width="32"><path d="M47.6 300.4L228.3 469.1c7.5 7 17.4 10.9 27.7 10.9s20.2-3.9 27.7-10.9L464.4 300.4c30.4-28.3 47.6-68 47.6-109.5v-5.8c0-69.9-50.5-129.5-119.4-141C347 36.5 300.6 51.4 268 84L256 96 244 84c-32.6-32.6-79-47.5-124.6-39.9C50.5 55.6 0 115.2 0 185.1v5.8c0 41.5 17.2 81.2 47.6 109.5z"/></svg>'} ${recipe.favorite ? 'Favorited' : 'Favorite'}
+                        ${recipe.favorite ? '<svg width="14" height="14" viewBox="0 0 512 512" fill="currentColor"><path d="M47.6 300.4L228.3 469.1c7.5 7 17.4 10.9 27.7 10.9s20.2-3.9 27.7-10.9L464.4 300.4c30.4-28.3 47.6-68 47.6-109.5v-5.8c0-69.9-50.5-129.5-119.4-141C347 36.5 300.6 51.4 268 84L256 96 244 84c-32.6-32.6-79-47.5-124.6-39.9C50.5 55.6 0 115.2 0 185.1v5.8c0 41.5 17.2 81.2 47.6 109.5z"/></svg> Favorited' : '<svg width="14" height="14" viewBox="0 0 512 512" fill="white"><path d="M47.6 300.4L228.3 469.1c7.5 7 17.4 10.9 27.7 10.9s20.2-3.9 27.7-10.9L464.4 300.4c30.4-28.3 47.6-68 47.6-109.5v-5.8c0-69.9-50.5-129.5-119.4-141C347 36.5 300.6 51.4 268 84L256 96 244 84c-32.6-32.6-79-47.5-124.6-39.9C50.5 55.6 0 115.2 0 185.1v5.8c0 41.5 17.2 81.2 47.6 109.5z"/></svg>'}${recipe.favorite ? ' Favorited' : ''}
                     </button>
                     <button class="btn-secondary btn-small" onclick="toggleMade('${recipe.id}'); viewRecipeDetail('${recipe.id}')">
-                        <svg width="14" height="14" viewBox="0 0 448 512" fill="currentColor"><path d="M438.6 105.4c12.5 12.5 12.5 32.8 0 45.3l-256 256c-12.5 12.5-32.8 12.5-45.3 0l-128-128c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0L160 338.7 393.4 105.4c12.5-12.5 32.8-12.5 45.3 0z"/></svg> ${recipe.made ? 'Made' : 'Mark as Made'}
+                        ${recipe.made ? '<svg width="14" height="14" viewBox="0 0 448 512" fill="currentColor"><path d="M438.6 105.4c12.5 12.5 12.5 32.8 0 45.3l-256 256c-12.5 12.5-32.8 12.5-45.3 0l-128-128c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0L160 338.7 393.4 105.4c12.5-12.5 32.8-12.5 45.3 0z"/></svg> Made' : '<svg width="14" height="14" viewBox="0 0 448 512" fill="white"><path d="M438.6 105.4c12.5 12.5 12.5 32.8 0 45.3l-256 256c-12.5 12.5-32.8 12.5-45.3 0l-128-128c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0L160 338.7 393.4 105.4c12.5-12.5 32.8-12.5 45.3 0z"/></svg>'}
                     </button>
                 </div>
             `;
