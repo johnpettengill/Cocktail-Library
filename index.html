@@ -1414,29 +1414,48 @@
             });
 
             // Search
-            document.getElementById('recipeSearch')?.addEventListener('input', renderDrinks);
-            document.getElementById('ingredientSearch')?.addEventListener('input', renderIngredients);
+            document.getElementById('recipeSearch')?.addEventListener('input', () => {
+                renderDrinks();
+                saveViewState();
+            });
+            document.getElementById('ingredientSearch')?.addEventListener('input', () => {
+                renderIngredients();
+                saveViewState();
+            });
 
             // Filters
-            document.getElementById('typeFilter')?.addEventListener('change', renderDrinks);
-            document.getElementById('ingredientTypeFilter')?.addEventListener('change', renderDrinks);
+            document.getElementById('typeFilter')?.addEventListener('change', () => {
+                renderDrinks();
+                saveViewState();
+            });
+            document.getElementById('ingredientTypeFilter')?.addEventListener('change', () => {
+                renderDrinks();
+                saveViewState();
+            });
             document.getElementById('favoriteFilter')?.addEventListener('click', function() {
                 this.classList.toggle('active');
                 renderDrinks();
+                saveViewState();
             });
             document.getElementById('inStockOnlyFilter')?.addEventListener('click', function() {
                 this.classList.toggle('active');
                 renderDrinks();
+                saveViewState();
             });
             document.getElementById('masterFilter')?.addEventListener('click', function() {
                 this.classList.toggle('active');
                 renderDrinks();
+                saveViewState();
             });
             document.getElementById('madeFilter')?.addEventListener('click', function() {
                 this.classList.toggle('active');
                 renderDrinks();
+                saveViewState();
             });
-            document.getElementById('ingredientTypeFilterIngredients')?.addEventListener('change', renderIngredients);
+            document.getElementById('ingredientTypeFilterIngredients')?.addEventListener('change', () => {
+                renderIngredients();
+                saveViewState();
+            });
         }
 
         // View Switching
@@ -1796,11 +1815,13 @@
             }
 
             modal.classList.add('active');
+            saveViewState();
         }
 
         function closeRecipeModal() {
             document.getElementById('recipeModal').classList.remove('active');
             currentRecipeId = null;
+            saveViewState();
         }
 
         function handleAutocomplete(input, dropdown) {
@@ -2031,11 +2052,13 @@
             renderComments(recipe);
             hideCommentForm();
             document.getElementById('recipeDetailModal').classList.add('active');
+            saveViewState();
         }
 
         function closeRecipeDetailModal() {
             document.getElementById('recipeDetailModal').classList.remove('active');
             currentRecipeId = null;
+            saveViewState();
         }
 
         function editRecipeFromDetail() {
@@ -2104,11 +2127,13 @@
             }
 
             modal.classList.add('active');
+            saveViewState();
         }
 
         function closeIngredientModal() {
             document.getElementById('ingredientModal').classList.remove('active');
             currentIngredientId = null;
+            saveViewState();
         }
 
         function saveIngredient() {
@@ -2266,14 +2291,93 @@
 
         // State Persistence
         function saveViewState() {
-            const activeView = document.querySelector('.view.active')?.id || 'home';
-            localStorage.setItem('lastView', activeView);
+            const state = {
+                view: document.querySelector('.view.active')?.id || 'home',
+                modal: null,
+                modalId: null,
+                filters: {},
+                search: {}
+            };
+
+            // Save open modal
+            const openModal = document.querySelector('.modal.active');
+            if (openModal) {
+                state.modal = openModal.id;
+                if (openModal.id === 'recipeDetailModal' && currentRecipeId) {
+                    state.modalId = currentRecipeId;
+                } else if (openModal.id === 'recipeModal' && currentRecipeId) {
+                    state.modalId = currentRecipeId;
+                } else if (openModal.id === 'ingredientModal' && currentIngredientId) {
+                    state.modalId = currentIngredientId;
+                }
+            }
+
+            // Save filters and search for drinks view
+            if (state.view === 'drinks') {
+                state.filters.typeFilter = document.getElementById('typeFilter')?.value || '';
+                state.filters.ingredientTypeFilter = document.getElementById('ingredientTypeFilter')?.value || '';
+                state.filters.favoriteFilter = document.getElementById('favoriteFilter')?.classList.contains('active') || false;
+                state.filters.inStockOnlyFilter = document.getElementById('inStockOnlyFilter')?.classList.contains('active') || false;
+                state.filters.masterFilter = document.getElementById('masterFilter')?.classList.contains('active') || false;
+                state.filters.madeFilter = document.getElementById('madeFilter')?.classList.contains('active') || false;
+                state.search.recipeSearch = document.getElementById('recipeSearch')?.value || '';
+            }
+
+            // Save filters and search for ingredients view
+            if (state.view === 'ingredients') {
+                state.filters.ingredientTypeFilterIngredients = document.getElementById('ingredientTypeFilterIngredients')?.value || '';
+                state.search.ingredientSearch = document.getElementById('ingredientSearch')?.value || '';
+            }
+
+            localStorage.setItem('appState', JSON.stringify(state));
         }
 
         function restoreViewState() {
-            const lastView = localStorage.getItem('lastView');
-            if (lastView && lastView !== 'home') {
-                switchView(lastView);
+            const stateJson = localStorage.getItem('appState');
+            if (!stateJson) return;
+
+            try {
+                const state = JSON.parse(stateJson);
+
+                // Restore view
+                if (state.view && state.view !== 'home') {
+                    switchView(state.view);
+                }
+
+                // Restore filters and search
+                if (state.view === 'drinks' && state.filters) {
+                    if (state.filters.typeFilter) document.getElementById('typeFilter').value = state.filters.typeFilter;
+                    if (state.filters.ingredientTypeFilter) document.getElementById('ingredientTypeFilter').value = state.filters.ingredientTypeFilter;
+                    if (state.filters.favoriteFilter) document.getElementById('favoriteFilter').classList.add('active');
+                    if (state.filters.inStockOnlyFilter) document.getElementById('inStockOnlyFilter').classList.add('active');
+                    if (state.filters.masterFilter) document.getElementById('masterFilter').classList.add('active');
+                    if (state.filters.madeFilter) document.getElementById('madeFilter').classList.add('active');
+                    if (state.search.recipeSearch) document.getElementById('recipeSearch').value = state.search.recipeSearch;
+                    renderDrinks();
+                }
+
+                if (state.view === 'ingredients' && state.filters) {
+                    if (state.filters.ingredientTypeFilterIngredients) document.getElementById('ingredientTypeFilterIngredients').value = state.filters.ingredientTypeFilterIngredients;
+                    if (state.search.ingredientSearch) document.getElementById('ingredientSearch').value = state.search.ingredientSearch;
+                    renderIngredients();
+                }
+
+                // Restore modal
+                if (state.modal && state.modalId) {
+                    setTimeout(() => {
+                        if (state.modal === 'recipeDetailModal') {
+                            viewRecipeDetail(state.modalId);
+                        } else if (state.modal === 'recipeModal') {
+                            openRecipeModal(state.modalId);
+                        } else if (state.modal === 'ingredientModal') {
+                            openIngredientModal(state.modalId);
+                        }
+                    }, 100);
+                } else if (state.modal === 'settingsModal') {
+                    setTimeout(() => openSettings(), 100);
+                }
+            } catch (error) {
+                console.error('Failed to restore state:', error);
             }
         }
 
@@ -2297,12 +2401,14 @@
             }
 
             modal.classList.add('active');
+            saveViewState();
         }
 
         function closeSettings() {
             const modal = document.getElementById('settingsModal');
             modal.classList.remove('active');
             document.getElementById('syncStatus').style.display = 'none';
+            saveViewState();
         }
 
         function saveGitHubToken() {
