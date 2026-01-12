@@ -1588,17 +1588,14 @@
 
             container.innerHTML = filtered.map(ingredient => `
                 <div class="card">
-                    <button class="card-edit-btn" onclick="editIngredient('${ingredient.id}')" title="Edit">✎</button>
-                    <div style="display: flex; justify-content: space-between; align-items: center; padding-right: 2.5rem;">
-                        <div>
-                            <h3>${ingredient.name}</h3>
-                            <span class="badge">${ingredientIcons[ingredient.type] || ''} <span style="text-transform: capitalize;">${ingredient.type}</span></span>
-                        </div>
-                        <label class="toggle">
-                            <input type="checkbox" ${ingredient.inStock ? 'checked' : ''}
-                                   onchange="toggleStock('${ingredient.id}')">
-                            <span class="toggle-slider"></span>
-                        </label>
+                    <label class="toggle" style="position: absolute; top: 1rem; right: 1rem;">
+                        <input type="checkbox" ${ingredient.inStock ? 'checked' : ''}
+                               onchange="toggleStock('${ingredient.id}')">
+                        <span class="toggle-slider"></span>
+                    </label>
+                    <div style="padding-right: 3rem;">
+                        <h3 onclick="editIngredient('${ingredient.id}')" style="cursor: pointer;">${ingredient.name}</h3>
+                        <span class="badge">${ingredientIcons[ingredient.type] || ''} <span style="text-transform: capitalize;">${ingredient.type}</span></span>
                     </div>
                 </div>
             `).join('');
