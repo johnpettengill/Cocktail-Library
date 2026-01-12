@@ -662,6 +662,7 @@
 
         .modal-header h2 {
             color: var(--accent);
+            margin-bottom: 0;
         }
 
         .close-modal {
@@ -1995,7 +1996,7 @@
 
             document.getElementById('detailRecipeName').textContent = recipe.name;
             document.getElementById('recipeDetailContent').innerHTML = `
-                <div class="card-meta" style="justify-content: flex-start; margin: 12px 0 0 0;">
+                <div class="card-meta" style="justify-content: flex-start; margin: 0;">
                     <span class="badge" onclick="closeRecipeDetailModal(); filterByType('${recipe.type}')" style="cursor: pointer;">${typeIcons[recipe.type] || ''} ${typeLabel}</span>
                     ${recipe.masterCrafted ? `<span class="badge master">${masterCraftedIcon} Master Crafted</span>` : ''}
                 </div>
