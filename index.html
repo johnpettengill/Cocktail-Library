@@ -463,6 +463,11 @@
             color: var(--gradient-start);
         }
 
+        .filter-chip.active::before {
+            content: '✓ ';
+            margin-right: 4px;
+        }
+
         .filter-select {
             flex: 1;
             min-width: 150px;
@@ -993,6 +998,8 @@
                     <option value="bitters">Bitters</option>
                     <option value="other">Other</option>
                 </select>
+
+                <button id="inStockFilterIngredients" class="filter-chip">In Stock</button>
             </div>
 
             <div id="ingredientsList"></div>
@@ -1457,6 +1464,11 @@
                 renderIngredients();
                 saveViewState();
             });
+            document.getElementById('inStockFilterIngredients')?.addEventListener('click', function() {
+                this.classList.toggle('active');
+                renderIngredients();
+                saveViewState();
+            });
         }
 
         // View Switching
@@ -1591,10 +1603,12 @@
             const container = document.getElementById('ingredientsList');
             const searchTerm = document.getElementById('ingredientSearch').value.toLowerCase();
             const typeFilter = document.getElementById('ingredientTypeFilterIngredients').value;
+            const inStockFilter = document.getElementById('inStockFilterIngredients')?.classList.contains('active') || false;
 
             let filtered = appData.ingredients.filter(ingredient => {
                 if (searchTerm && !ingredient.name.toLowerCase().includes(searchTerm)) return false;
                 if (typeFilter && ingredient.type !== typeFilter) return false;
+                if (inStockFilter && !ingredient.inStock) return false;
                 return true;
             });
 
@@ -2327,6 +2341,7 @@
             // Save filters and search for ingredients view
             if (state.view === 'ingredients') {
                 state.filters.ingredientTypeFilterIngredients = document.getElementById('ingredientTypeFilterIngredients')?.value || '';
+                state.filters.inStockFilterIngredients = document.getElementById('inStockFilterIngredients')?.classList.contains('active') || false;
                 state.search.ingredientSearch = document.getElementById('ingredientSearch')?.value || '';
             }
 
@@ -2359,6 +2374,7 @@
 
                 if (state.view === 'ingredients' && state.filters) {
                     if (state.filters.ingredientTypeFilterIngredients) document.getElementById('ingredientTypeFilterIngredients').value = state.filters.ingredientTypeFilterIngredients;
+                    if (state.filters.inStockFilterIngredients) document.getElementById('inStockFilterIngredients').classList.add('active');
                     if (state.search.ingredientSearch) document.getElementById('ingredientSearch').value = state.search.ingredientSearch;
                     renderIngredients();
                 }
