@@ -632,7 +632,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 0.75rem;
+            margin-bottom: 0.5rem;
         }
 
         .modal-header h2 {
@@ -1512,7 +1512,7 @@
                 <div class="card">
                     <h3 onclick="viewRecipeDetail('${recipe.id}')">${recipe.name}</h3>
                     <div class="card-meta">
-                        <span class="badge">${typeIcons[recipe.type] || ''} ${typeLabel}</span>
+                        <span class="badge" onclick="event.stopPropagation(); filterByType('${recipe.type}')" style="cursor: pointer;">${typeIcons[recipe.type] || ''} ${typeLabel}</span>
                         ${recipe.masterCrafted ? `<span class="badge master">${masterCraftedIcon} Master Crafted</span>` : ''}
                     </div>
                     <div class="ingredient-list">
@@ -1593,7 +1593,7 @@
                     <h3 style="font-family: 'Brush Script MT', cursive; font-size: 14px; text-align: center; margin-bottom: 0; font-weight: normal;">Featured Drink</h3>
                     <h2 style="color: var(--accent); margin: 0 0 0.5rem 0; text-align: center;">${randomRecipe.name}</h2>
                     <div class="card-meta">
-                        <span class="badge">${typeIcons[randomRecipe.type] || ''} ${typeLabel}</span>
+                        <span class="badge" onclick="filterByType('${randomRecipe.type}')" style="cursor: pointer;">${typeIcons[randomRecipe.type] || ''} ${typeLabel}</span>
                         ${randomRecipe.masterCrafted ? `<span class="badge master">${masterCraftedIcon} Master Crafted</span>` : ''}
                     </div>
                     <div class="ingredient-list">
@@ -1970,7 +1970,7 @@
             document.getElementById('detailRecipeName').textContent = recipe.name;
             document.getElementById('recipeDetailContent').innerHTML = `
                 <div class="card-meta" style="justify-content: flex-start; margin: 12px 0 0 0;">
-                    <span class="badge">${typeIcons[recipe.type] || ''} ${typeLabel}</span>
+                    <span class="badge" onclick="closeRecipeDetailModal(); filterByType('${recipe.type}')" style="cursor: pointer;">${typeIcons[recipe.type] || ''} ${typeLabel}</span>
                     ${recipe.masterCrafted ? `<span class="badge master">${masterCraftedIcon} Master Crafted</span>` : ''}
                 </div>
 
@@ -2243,6 +2243,18 @@
             if (lastView && lastView !== 'home') {
                 switchView(lastView);
             }
+        }
+
+        // Filter by Type
+        function filterByType(type) {
+            // Switch to drinks view if not already there
+            switchView('drinks');
+
+            // Set the type filter dropdown
+            document.getElementById('typeFilter').value = type;
+
+            // Trigger the filter update
+            renderDrinks();
         }
 
         // Settings Modal Functions
