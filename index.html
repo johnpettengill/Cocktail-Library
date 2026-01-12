@@ -819,6 +819,26 @@
         .hidden {
             display: none !important;
         }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 2rem 1rem;
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+            margin-top: 3rem;
+        }
+
+        .footer a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            cursor: pointer;
+            transition: color 0.2s ease;
+        }
+
+        .footer a:hover {
+            color: var(--accent);
+        }
     </style>
 </head>
 <body>
@@ -832,7 +852,6 @@
         <button class="nav-btn active" data-view="home">Home</button>
         <button class="nav-btn" data-view="recipes">Drinks</button>
         <button class="nav-btn" data-view="ingredients">Ingredients</button>
-        <button class="nav-btn" onclick="openSettings()" style="margin-left: auto;">⚙️</button>
     </div>
 
     <!-- Main Container -->
@@ -1053,6 +1072,11 @@
         </div>
     </div>
 
+    <!-- Footer -->
+    <div class="footer">
+        &copy; 2026 Bruce Banner | <a onclick="openSettings()">Settings</a>
+    </div>
+
     <!-- Settings Modal -->
     <div id="settingsModal" class="modal">
         <div class="modal-content">
@@ -1061,26 +1085,19 @@
                 <button class="close-modal" onclick="closeSettings()">&times;</button>
             </div>
 
-            <h3 style="margin-bottom: 0.5rem;">GitHub Sync</h3>
-            <p style="color: var(--text-secondary); margin-bottom: 1rem; font-size: 0.9rem;">
-                Enable cross-device sync using a private GitHub Gist. Your data will automatically sync across all your devices.
-            </p>
+            <div style="padding: 1rem 0;">
+                <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">GitHub Personal Access Token</label>
+                <input type="password" id="githubTokenInput" placeholder="Paste your token here..." style="width: 100%; margin-bottom: 0.5rem;">
+                <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 1rem;">
+                    Create a token at <a href="https://github.com/settings/tokens/new" target="_blank" style="color: var(--accent);">github.com/settings/tokens/new</a> with 'gist' scope
+                </p>
 
-            <label style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 0.5rem; display: block;">GitHub Personal Access Token</label>
-            <input type="password" id="githubToken" placeholder="ghp_xxxxxxxxxxxx">
+                <div style="display: flex; gap: 0.5rem; margin-bottom: 1rem;">
+                    <button class="btn" onclick="saveGitHubToken()">Save Token</button>
+                    <button class="btn-secondary" onclick="testSync()">Test Sync</button>
+                </div>
 
-            <p style="color: var(--text-secondary); margin: 1rem 0; font-size: 0.85rem;">
-                Don't have a token? <a href="https://github.com/settings/tokens/new?description=Cocktail%20Library%20Sync&scopes=gist" target="_blank" style="color: var(--accent);">Create one here</a> (select 'gist' scope only)
-            </p>
-
-            <div id="syncStatus" style="margin: 1rem 0; padding: 0.75rem; background: rgba(255,255,255,0.05); border-radius: 8px; display: none;">
-                <div style="font-size: 0.9rem; color: var(--text-secondary);"></div>
-            </div>
-
-            <div style="display: flex; gap: 1rem; margin-top: 1.5rem;">
-                <button class="btn" onclick="saveGitHubToken()">Save & Sync</button>
-                <button class="btn-secondary" onclick="testSync()">Test Connection</button>
-                <button class="btn-secondary" onclick="closeSettings()">Close</button>
+                <div id="syncStatus" style="padding: 0.75rem; border-radius: 8px; display: none;"></div>
             </div>
         </div>
     </div>
@@ -1138,16 +1155,18 @@
             displayRandomRecipe();
 
             // Initial GitHub sync if configured
-            if (localStorage.getItem('githubToken')) {
+            const githubToken = localStorage.getItem('githubToken');
+            if (githubToken) {
                 syncWithGitHub();
             }
 
-            // Sync with GitHub periodically
+            // Sync with GitHub periodically (every 10 seconds)
             setInterval(() => {
-                if (localStorage.getItem('githubToken')) {
+                const githubToken = localStorage.getItem('githubToken');
+                if (githubToken) {
                     syncWithGitHub();
                 }
-            }, 10000); // Every 10 seconds
+            }, 10000);
         }
 
         // Default Data
@@ -2213,26 +2232,58 @@
             }
         }
 
-        function saveGitHubToken() {
-            const token = document.getElementById('githubToken').value.trim();
-            if (token) {
-                localStorage.setItem('githubToken', token);
-                showSyncStatus('Token saved! Syncing now...', 'success');
-                syncWithGitHub().then(() => {
-                    showSyncStatus('Successfully synced with GitHub!', 'success');
-                    setTimeout(() => {
-                        closeSettings();
-                    }, 2000);
-                });
-            } else {
-                showSyncStatus('Please enter a valid token', 'error');
+        // State Persistence
+        function saveViewState() {
+            const activeView = document.querySelector('.view.active')?.id || 'home';
+            localStorage.setItem('lastView', activeView);
+        }
+
+        function restoreViewState() {
+            const lastView = localStorage.getItem('lastView');
+            if (lastView && lastView !== 'home') {
+                switchView(lastView);
             }
         }
 
-        async function testSync() {
-            const token = document.getElementById('githubToken').value.trim() || localStorage.getItem('githubToken');
+        // Settings Modal Functions
+        function openSettings() {
+            const modal = document.getElementById('settingsModal');
+            const input = document.getElementById('githubTokenInput');
+            const token = localStorage.getItem('githubToken');
+
+            if (token) {
+                input.value = token;
+            }
+
+            modal.classList.add('active');
+        }
+
+        function closeSettings() {
+            const modal = document.getElementById('settingsModal');
+            modal.classList.remove('active');
+            document.getElementById('syncStatus').style.display = 'none';
+        }
+
+        function saveGitHubToken() {
+            const token = document.getElementById('githubTokenInput').value.trim();
+
             if (!token) {
-                showSyncStatus('Please enter a token first', 'error');
+                showSyncStatus('Please enter a valid token', 'error');
+                return;
+            }
+
+            localStorage.setItem('githubToken', token);
+            showSyncStatus('Token saved successfully! Syncing...', 'success');
+
+            // Trigger immediate sync
+            syncWithGitHub();
+        }
+
+        async function testSync() {
+            const token = localStorage.getItem('githubToken');
+
+            if (!token) {
+                showSyncStatus('No token found. Please save a token first.', 'error');
                 return;
             }
 
@@ -2248,56 +2299,30 @@
 
                 if (response.ok) {
                     const user = await response.json();
-                    showSyncStatus(`Connected as ${user.login} ✓`, 'success');
+                    showSyncStatus(`Connected as ${user.login}. Syncing data...`, 'success');
+                    await syncWithGitHub();
                 } else {
                     showSyncStatus('Invalid token or connection failed', 'error');
                 }
             } catch (error) {
-                showSyncStatus('Connection failed: ' + error.message, 'error');
+                showSyncStatus('Connection test failed: ' + error.message, 'error');
             }
         }
 
         function showSyncStatus(message, type) {
-            const status = document.getElementById('syncStatus');
-            const statusText = status.querySelector('div');
-            statusText.textContent = message;
-            status.style.display = 'block';
+            const statusDiv = document.getElementById('syncStatus');
+            statusDiv.textContent = message;
+            statusDiv.style.display = 'block';
 
             if (type === 'success') {
-                status.style.background = 'rgba(76, 175, 80, 0.2)';
-                statusText.style.color = '#4CAF50';
+                statusDiv.style.backgroundColor = 'rgba(46, 204, 113, 0.1)';
+                statusDiv.style.color = '#2ecc71';
             } else if (type === 'error') {
-                status.style.background = 'rgba(244, 67, 54, 0.2)';
-                statusText.style.color = '#F44336';
+                statusDiv.style.backgroundColor = 'rgba(231, 76, 60, 0.1)';
+                statusDiv.style.color = '#e74c3c';
             } else {
-                status.style.background = 'rgba(255, 255, 255, 0.05)';
-                statusText.style.color = 'var(--text-secondary)';
-            }
-        }
-
-        function openSettings() {
-            const modal = document.getElementById('settingsModal');
-            const token = localStorage.getItem('githubToken');
-            if (token) {
-                document.getElementById('githubToken').value = token;
-            }
-            modal.classList.add('active');
-        }
-
-        function closeSettings() {
-            document.getElementById('settingsModal').classList.remove('active');
-        }
-
-        // State Persistence
-        function saveViewState() {
-            const activeView = document.querySelector('.view.active')?.id || 'home';
-            localStorage.setItem('lastView', activeView);
-        }
-
-        function restoreViewState() {
-            const lastView = localStorage.getItem('lastView');
-            if (lastView && lastView !== 'home') {
-                switchView(lastView);
+                statusDiv.style.backgroundColor = 'rgba(52, 152, 219, 0.1)';
+                statusDiv.style.color = '#3498db';
             }
         }
 
