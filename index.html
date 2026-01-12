@@ -301,14 +301,14 @@
         }
 
         .btn-secondary {
-            background: var(--input-bg);
+            background: transparent;
             color: var(--text-primary);
             border: 1px solid var(--card-border);
+            border-radius: 8px;
         }
 
         .btn-secondary:hover {
-            background: rgba(255, 255, 255, 0.1);
-            box-shadow: 0 4px 12px var(--shadow);
+            background: var(--input-bg);
         }
 
         .btn-small {
@@ -688,6 +688,15 @@
             right: 0;
             top: 0;
             font-weight: 400;
+            transition: all 0.3s ease;
+            border-radius: 8px;
+        }
+
+        .close-modal:hover {
+            width: 34px;
+            height: 34px;
+            background: transparent;
+            border: 1px solid var(--card-border);
         }
 
         #ingredientName {
