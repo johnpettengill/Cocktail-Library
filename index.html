@@ -1613,13 +1613,13 @@
 
             container.innerHTML = filtered.map(ingredient => `
                 <div class="card">
-                    <label class="toggle" style="position: absolute; top: 1rem; right: 1rem;">
+                    <label class="toggle" style="position: absolute; top: 24px; right: 24px;">
                         <input type="checkbox" ${ingredient.inStock ? 'checked' : ''}
                                onchange="toggleStock('${ingredient.id}')">
                         <span class="toggle-slider"></span>
                     </label>
                     <div style="padding-right: 3rem;">
-                        <h3 onclick="editIngredient('${ingredient.id}')" style="cursor: pointer;">${ingredient.name}</h3>
+                        <h3 onclick="editIngredient('${ingredient.id}')" style="cursor: pointer; font-family: Helvetica, Arial, sans-serif; font-size: 16px; font-weight: 700; text-align: left;">${ingredient.name}</h3>
                         <span class="badge">${ingredientIcons[ingredient.type] || ''} <span style="text-transform: capitalize;">${ingredient.type}</span></span>
                     </div>
                 </div>
