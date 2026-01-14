@@ -335,6 +335,24 @@
             border-color: var(--accent);
         }
 
+        .btn-submit {
+            background: var(--accent);
+            border-color: var(--accent);
+            color: var(--gradient-start);
+            padding: 0.5rem 1rem;
+            font-size: 0.9rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+        }
+
+        .btn-submit:hover {
+            background: var(--accent-hover);
+            border-color: var(--accent-hover);
+            transform: scale(1.1);
+        }
+
         .btn-delete-ingredient {
             padding: 0.5rem;
             background: transparent;
@@ -1049,9 +1067,9 @@
                 <span>Master Crafted ⭐</span>
             </label>
 
-            <div style="display: flex; gap: 1rem; margin-top: 1.5rem;">
-                <button class="btn" onclick="saveRecipe()">Save Drink</button>
-                <button class="btn-secondary" onclick="closeRecipeModal()">Cancel</button>
+            <div style="display: flex; gap: 0.5rem; justify-content: flex-end; margin-top: 1.5rem;">
+                <button class="btn-secondary btn-small" onclick="closeRecipeModal()">Cancel</button>
+                <button class="btn-submit" onclick="saveRecipe()">Save</button>
             </div>
         </div>
     </div>
@@ -1093,8 +1111,9 @@
                 <div class="modal-footer-left">
                     <button class="btn-secondary btn-small" id="deleteIngredientBtn" onclick="deleteIngredientFromModal()" style="display: none;">Delete</button>
                 </div>
-                <div class="modal-footer-right">
-                    <button class="btn" onclick="saveIngredient()">Save</button>
+                <div class="modal-footer-right" style="display: flex; gap: 0.5rem;">
+                    <button class="btn-secondary btn-small" onclick="closeIngredientModal()">Cancel</button>
+                    <button class="btn-submit" onclick="saveIngredient()">Save</button>
                 </div>
             </div>
         </div>
@@ -1114,7 +1133,7 @@
                 <hr style="border: none; border-top: 1px solid var(--card-border); margin-bottom: 1rem;">
                 <textarea id="newComment" placeholder="Your tasting notes..."></textarea>
                 <div style="display: flex; gap: 0.5rem; margin-top: 0.25rem;">
-                    <button class="btn-secondary btn-small" onclick="addComment()">Submit</button>
+                    <button class="btn-submit" onclick="addComment()">Submit</button>
                     <button class="btn-secondary btn-small" onclick="hideCommentForm()">Cancel</button>
                 </div>
             </div>
