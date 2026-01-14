@@ -300,10 +300,12 @@
             color: var(--text-primary);
             border: 1px solid var(--card-border);
             border-radius: 8px;
+            transition: all 0.3s ease;
         }
 
         .btn-secondary:hover {
             background: var(--input-bg);
+            transform: scale(1.1);
         }
 
         .btn-small {
@@ -1112,7 +1114,7 @@
                 <hr style="border: none; border-top: 1px solid var(--card-border); margin-bottom: 1rem;">
                 <textarea id="newComment" placeholder="Your tasting notes..."></textarea>
                 <div style="display: flex; gap: 0.5rem; margin-top: 0.25rem;">
-                    <button class="btn btn-small" onclick="addComment()">Add Comment</button>
+                    <button class="btn-secondary btn-small" onclick="addComment()">Submit</button>
                     <button class="btn-secondary btn-small" onclick="hideCommentForm()">Cancel</button>
                 </div>
             </div>
