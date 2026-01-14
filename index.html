@@ -1479,6 +1479,28 @@
                 renderIngredients();
                 saveViewState();
             });
+
+            // Close modals when clicking outside
+            document.getElementById('recipeModal')?.addEventListener('click', function(e) {
+                if (e.target === this) {
+                    closeRecipeModal();
+                }
+            });
+            document.getElementById('ingredientModal')?.addEventListener('click', function(e) {
+                if (e.target === this) {
+                    closeIngredientModal();
+                }
+            });
+            document.getElementById('recipeDetailModal')?.addEventListener('click', function(e) {
+                if (e.target === this) {
+                    closeRecipeDetailModal();
+                }
+            });
+            document.getElementById('settingsModal')?.addEventListener('click', function(e) {
+                if (e.target === this) {
+                    closeSettings();
+                }
+            });
         }
 
         // View Switching
