@@ -1109,9 +1109,9 @@
             <div id="recipeDetailContent"></div>
 
             <div id="commentFormContainer" style="margin-top: 1.5rem; display: none;">
-                <h3 style="margin-bottom: 0.5rem;">Add Comment</h3>
+                <hr style="border: none; border-top: 1px solid var(--card-border); margin-bottom: 1rem;">
                 <textarea id="newComment" placeholder="Your tasting notes..."></textarea>
-                <div style="display: flex; gap: 0.5rem; margin-top: 0.5rem;">
+                <div style="display: flex; gap: 0.5rem; margin-top: 0.25rem;">
                     <button class="btn btn-small" onclick="addComment()">Add Comment</button>
                     <button class="btn-secondary btn-small" onclick="hideCommentForm()">Cancel</button>
                 </div>
@@ -2069,6 +2069,7 @@
                     <button class="btn-icon ${recipe.made ? 'active' : ''}" onclick="toggleMade('${recipe.id}'); viewRecipeDetail('${recipe.id}')">
                         ${recipe.made ? '<svg width="16" height="16" viewBox="0 0 448 512" fill="currentColor"><path d="M438.6 105.4c12.5 12.5 12.5 32.8 0 45.3l-256 256c-12.5 12.5-32.8 12.5-45.3 0l-128-128c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0L160 338.7 393.4 105.4c12.5-12.5 32.8-12.5 45.3 0z"/></svg><span style="margin-left: 4px;">Made</span>' : '<svg width="16" height="16" viewBox="0 0 448 512" fill="white"><path d="M438.6 105.4c12.5 12.5 12.5 32.8 0 45.3l-256 256c-12.5 12.5-32.8 12.5-45.3 0l-128-128c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0L160 338.7 393.4 105.4c12.5-12.5 32.8-12.5 45.3 0z"/></svg>'}
                     </button>
+                    <button class="btn-secondary btn-small" onclick="editRecipeFromDetail()">Edit</button>
                     <button class="btn-secondary btn-small" onclick="showCommentForm()">Add Comment</button>
                 </div>
             `;
