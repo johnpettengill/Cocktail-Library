@@ -1661,11 +1661,11 @@
 
             const container = document.getElementById('randomRecipeCard');
             container.innerHTML = `
-                <div class="card">
+                <div class="card" onclick="viewRecipeDetail('${randomRecipe.id}')">
                     <h3 style="font-family: 'Brush Script MT', cursive; font-size: 14px; text-align: center; margin-bottom: 0; font-weight: normal;">Featured Drink</h3>
                     <h2 style="color: var(--accent); margin: 0 0 0.5rem 0; text-align: center;">${randomRecipe.name}</h2>
                     <div class="card-meta">
-                        <span class="badge" onclick="filterByType('${randomRecipe.type}')" style="cursor: pointer;">${typeIcons[randomRecipe.type] || ''} ${typeLabel}</span>
+                        <span class="badge" onclick="event.stopPropagation(); filterByType('${randomRecipe.type}')" style="cursor: pointer;">${typeIcons[randomRecipe.type] || ''} ${typeLabel}</span>
                         ${randomRecipe.masterCrafted ? `<span class="badge master">${masterCraftedIcon} Master Crafted</span>` : ''}
                     </div>
                     <div class="ingredient-list">
@@ -1677,7 +1677,6 @@
                         `).join('')}
                     </div>
                     <p style="margin-top: 1rem; color: var(--text-secondary);">${randomRecipe.instructions}</p>
-                    <button class="btn btn-small" style="margin-top: 1rem;" onclick="viewRecipeDetail('${randomRecipe.id}')">View Details</button>
                 </div>
             `;
         }
