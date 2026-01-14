@@ -2111,8 +2111,9 @@
         }
 
         function editRecipeFromDetail() {
+            const recipeId = currentRecipeId; // Save ID before closing modal
             closeRecipeDetailModal();
-            openRecipeModal(currentRecipeId);
+            openRecipeModal(recipeId);
         }
 
         function addComment() {
