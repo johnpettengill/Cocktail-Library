@@ -162,12 +162,13 @@
             margin-bottom: 1.5rem;
             backdrop-filter: blur(10px);
             box-shadow: 0 8px 32px var(--shadow);
-            transition: transform 0.3s ease;
+            transition: background 0.3s ease;
             position: relative;
+            cursor: pointer;
         }
 
         .card:hover {
-            /* Removed translateY to prevent cards from moving on hover */
+            background: rgba(255, 255, 255, 0.12);
         }
 
         .card-edit-btn {
@@ -199,12 +200,6 @@
             margin-bottom: 0.5rem;
             color: var(--accent);
             text-align: center;
-            cursor: pointer;
-            transition: opacity 0.3s ease;
-        }
-
-        .card h3:hover {
-            opacity: 0.8;
         }
 
         .card-meta {
@@ -262,7 +257,7 @@
             -moz-appearance: none;
             appearance: none;
             background-color: var(--input-bg);
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 20 20'%3E%3Cpath fill='%23ffffff' d='M10 3l5 5H5l5-5zm0 14l-5-5h10l-5 5z'/%3E%3C/svg%3E");
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 512 512' fill='none' stroke='%23ffffff' stroke-width='48' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M112 184l144 144 144-144'/%3E%3C/svg%3E");
             background-repeat: no-repeat;
             background-position: right 0.75rem center;
             background-size: 20px 20px;
@@ -476,7 +471,7 @@
             -webkit-appearance: none;
             -moz-appearance: none;
             appearance: none;
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 20 20'%3E%3Cpath fill='%23ffffff' d='M10 3l5 5H5l5-5zm0 14l-5-5h10l-5 5z'/%3E%3C/svg%3E");
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 512 512' fill='none' stroke='%23ffffff' stroke-width='48' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M112 184l144 144 144-144'/%3E%3C/svg%3E");
             background-repeat: no-repeat;
             background-position: right 0.75rem center;
             background-size: 20px 20px;
@@ -1587,8 +1582,8 @@
                                  recipe.type.charAt(0).toUpperCase() + recipe.type.slice(1);
 
                 return `
-                <div class="card">
-                    <h3 onclick="viewRecipeDetail('${recipe.id}')">${recipe.name}</h3>
+                <div class="card" onclick="viewRecipeDetail('${recipe.id}')">
+                    <h3>${recipe.name}</h3>
                     <div class="card-meta">
                         <span class="badge" onclick="event.stopPropagation(); filterByType('${recipe.type}')" style="cursor: pointer;">${typeIcons[recipe.type] || ''} ${typeLabel}</span>
                         ${recipe.masterCrafted ? `<span class="badge master">${masterCraftedIcon} Master Crafted</span>` : ''}
@@ -1642,14 +1637,14 @@
             }
 
             container.innerHTML = filtered.map(ingredient => `
-                <div class="card">
-                    <label class="toggle" style="position: absolute; top: 24px; right: 24px;">
+                <div class="card" onclick="editIngredient('${ingredient.id}')">
+                    <label class="toggle" style="position: absolute; top: 24px; right: 24px;" onclick="event.stopPropagation();">
                         <input type="checkbox" ${ingredient.inStock ? 'checked' : ''}
-                               onchange="toggleStock('${ingredient.id}')">
+                               onchange="event.stopPropagation(); toggleStock('${ingredient.id}')">
                         <span class="toggle-slider"></span>
                     </label>
                     <div style="padding-right: 3rem;">
-                        <h3 onclick="editIngredient('${ingredient.id}')" style="cursor: pointer; font-family: Helvetica, Arial, sans-serif; font-size: 16px; font-weight: 700; text-align: left;">${ingredient.name}</h3>
+                        <h3 style="cursor: pointer; font-family: Helvetica, Arial, sans-serif; font-size: 16px; font-weight: 700; text-align: left;">${ingredient.name}</h3>
                         <span class="badge">${ingredientIcons[ingredient.type] || ''} <span style="text-transform: capitalize;">${ingredient.type}</span></span>
                     </div>
                 </div>
