@@ -674,7 +674,7 @@
 
         .close-modal {
             background: transparent;
-            border: none;
+            border: 1px solid transparent;
             color: var(--text-primary);
             font-size: 1.5rem;
             cursor: pointer;
@@ -693,10 +693,8 @@
         }
 
         .close-modal:hover {
-            width: 34px;
-            height: 34px;
             background: transparent;
-            border: 1px solid var(--card-border);
+            border-color: var(--card-border);
         }
 
         #ingredientName {
@@ -2412,8 +2410,8 @@
             // Set the type filter dropdown FIRST
             document.getElementById('typeFilter').value = type;
 
-            // Switch to drinks view if not already there (this will call renderAll)
-            switchView('drinks');
+            // Switch to recipes view if not already there (this will call renderAll)
+            switchView('recipes');
         }
 
         // Settings Modal Functions
